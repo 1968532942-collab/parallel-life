@@ -16,4 +16,7 @@ out = re.sub(r'<script src="([^"]+)"></script>', js, out)
 os.makedirs(os.path.join(ROOT, 'dist'), exist_ok=True)
 dst = os.path.join(ROOT, 'dist', 'index.html')
 open(dst, 'w', encoding='utf-8').write(out)
-print('built', dst, round(len(out.encode()) / 1024), 'KB')
+import shutil
+if os.path.isdir(os.path.join(ROOT, 'music')):
+    shutil.copytree(os.path.join(ROOT, 'music'), os.path.join(ROOT, 'dist', 'music'), dirs_exist_ok=True)
+print('built', dst, round(len(out.encode()) / 1024), 'KB（背景音乐在 dist/music/，需与 index.html 放在一起）')

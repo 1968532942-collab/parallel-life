@@ -28,7 +28,10 @@ js/figures.js         人物、手部、主角背影、年轻的自己（程序�
 js/audio.js           Web Audio 实时合成的全部音效与原创旋律
 js/poster.js          1080×1920 结局海报（Canvas 本地绘制）
 js/heroine.js         主角参考图（用户提供，裁切压缩后内嵌）
-dist/index.html       单文件打包版（tools/build.py 生成）
+dist/                 打包版（tools/build.py 生成）：index.html 为单文件代码，背景音乐在 dist/music/
+music/                背景音乐（AAC），文件名即场景编号
+js/music.js           背景音乐播放器（交叉淡化、循环、开关）
+js/music-map.js       场景与音乐文件的对应表
 tools/build.py        打包脚本：python3 tools/build.py
 tools/playthrough.py  自动走通测试：python3 tools/playthrough.py home 输出目录
 ```
@@ -43,7 +46,8 @@ tools/playthrough.py  自动走通测试：python3 tools/playthrough.py home 输
 | 主角正面形象 | 用户上传的参考图，裁切为 WebP 内嵌 | 已完成（标题页、地铁车窗倒影） |
 | 主角背影、年轻的自己、家人、学生、朋友、路人 | 按参考图的配色与“无五官纸艺”画风，用 SVG 程序绘制 | 已完成 |
 | 全部场景（老街、校门、面馆、樱花大道、超市、出租屋、地铁、音乐厅、美术馆、咖啡馆、夜宵店、夜景） | SVG 程序绘制 + Canvas 生成的纸张肌理 | 已完成 |
-| 背景音乐、音效与音乐会旋律 | Web Audio 实时合成：序章、家乡线、远方线、结局四段原创背景乐（铺底和弦 + 琶音 + 混响），切换时淡入淡出；无任何外部音频或授权音乐 | 已完成 |
+| 背景音乐 | 用户提供的 11 首古典钢琴配乐，截取前 3 分钟、统一响度并压缩为 AAC（music/，共约 17MB）；对应关系见 js/music-map.js。每幕一首，切换时 2 秒交叉淡化，音量 20%，循环播放；某首加载失败时自动退回程序合成的背景乐 | 已完成 |
+| 音效 | Web Audio 实时合成（翻信纸、铃声、地铁提示音、碰杯等），无外部音频 | 已完成 |
 | 字体 | 使用设备自带中文字体（宋体/苹方等），不加载外部字体 | — |
 | 结局海报 | 运行时用 Canvas 绘制 | 已完成 |
 

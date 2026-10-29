@@ -984,6 +984,124 @@ window.HEROINE_SRC="data:image/webp;base64,UklGRvqaAABXRUJQVlA4WAoAAAAQAAAArQEAg
 
 </script>
 <script>
+/* 场景 → 背景音乐文件（music/ 目录，按用户提供的曲名对应）
+   prologue 开场：来自平行时空的信
+   h1 又是一年桂花香 · h2 下班后的晚风（高中回忆曲）· h3 街角的那家面馆 · h4 樱花开的时候 · h5 原来，我也在慢慢长大
+   c1 终于有了自己的小房间 · c2 陌生城市的末班地铁 · c3 终于听到了那场音乐会 · c4 一个人的周末美术馆 · c5 这座城市，也有了我想见的人
+   复用（见 music.js 的 ALIAS）：c6 与远方结局 = c1；家乡结局 = h2；终章 = h5
+   某项留空则该场景退回程序合成的背景乐 */
+window.MUSIC_FILES = {
+  prologue: 'music/prologue.m4a',
+  h1: 'music/h1.m4a', h2: 'music/h2.m4a', h3: 'music/h3.m4a', h4: 'music/h4.m4a', h5: 'music/h5.m4a',
+  c1: 'music/c1.m4a', c2: 'music/c2.m4a', c3: 'music/c3.m4a', c4: 'music/c4.m4a', c5: 'music/c5.m4a'
+};
+
+</script>
+<script>
+/* =========================================================
+   music.js — 背景音乐播放器（用户提供的钢琴配乐）
+   - 每幕一首，切换时约 2 秒交叉淡入淡出
+   - 默认音量 20%，给环境音效留出空间
+   - 循环：每首快结束时与自身的开头交叉淡化，不会突然停止
+   - 全局开关：关闭后切换场景也不会自动播放
+   - 手机自动播放限制：用户点击“打开那封信”后才开始（unlock）
+   - 某首加载失败时，自动退回程序合成的背景乐，不会无声
+   ========================================================= */
+(function () {
+  'use strict';
+  const VOL = 0.2, FADE = 2;
+  // 场景 → 文件（js/music-map.js 里填写）
+  const FILES = window.MUSIC_FILES || {};
+  // 指定复用：远方最后一幕、两个结局、终章
+  const ALIAS = { c6: 'c1', endFar: 'c1', endHome: 'h2', finale: 'h5' };
+  // 文件缺失或加载失败时，退回的合成主题
+  const SYNTH = k => k === 'prologue' ? 'night' : /^h/.test(k) ? 'home' : /^c/.test(k) ? 'far' : 'end';
+
+  let on = true, unlocked = false, want = null, cur = null, ctx = null;
+  const broken = {};
+
+  const srcFor = key => {
+    if (!key) return null;
+    const k = FILES[key] ? key : ALIAS[key];
+    const f = k && FILES[k];
+    return f && !broken[f] ? f : null;
+  };
+  const useGraph = () => !!ctx && /^https?:/.test(location.protocol);
+
+  function make(src) {
+    const el = new Audio();
+    el.preload = 'auto'; el.setAttribute('playsinline', ''); el.src = src;
+    const t = { src, el, g: null, vol: 0, timer: 0, looping: false };
+    if (useGraph()) {
+      try { const node = ctx.createMediaElementSource(el); t.g = ctx.createGain(); t.g.gain.value = 0; node.connect(t.g); t.g.connect(ctx.destination); } catch (e) { t.g = null; }
+    }
+    if (!t.g) el.volume = 0;
+    el.addEventListener('error', () => { broken[src] = true; if (cur === t) { cur = null; sync(); } });
+    el.addEventListener('ended', () => { if (cur === t && on) start(src); });
+    return t;
+  }
+  function fade(t, to, dur) {
+    if (t.g) {
+      const g = t.g.gain, now = ctx.currentTime;
+      g.cancelScheduledValues(now); g.setValueAtTime(g.value, now); g.linearRampToValueAtTime(to, now + dur);
+      return;
+    }
+    clearInterval(t.timer);
+    const from = t.el.volume, t0 = performance.now();
+    t.timer = setInterval(() => {
+      const p = Math.min(1, (performance.now() - t0) / (dur * 1000));
+      t.el.volume = Math.max(0, Math.min(1, from + (to - from) * p));
+      if (p >= 1) clearInterval(t.timer);
+    }, 50);
+  }
+  function retire(t) {
+    fade(t, 0, FADE);
+    setTimeout(() => { try { t.el.pause(); t.el.removeAttribute('src'); t.el.load(); if (t.g) t.g.disconnect(); } catch (e) {} }, FADE * 1000 + 300);
+  }
+  function start(src) {
+    const t = make(src);
+    const p = t.el.play(); if (p && p.catch) p.catch(() => {});
+    fade(t, VOL, FADE);
+    if (cur) retire(cur);
+    cur = t;
+  }
+  function sync() {
+    if (!unlocked) return;
+    const src = on ? srcFor(want) : null;
+    // 有配乐文件：停掉合成背景乐；没有：交给合成背景乐
+    if (window.AUDIO) AUDIO.theme(src || !on ? null : SYNTH(want || 'prologue'));
+    if (!src) { if (cur) { retire(cur); cur = null; } return; }
+    if (cur && cur.src === src) { if (cur.el.paused && !document.hidden) cur.el.play().catch(() => {}); return; }
+    start(src);
+  }
+
+  // 循环：快到结尾时与自身开头交叉淡化
+  setInterval(() => {
+    if (!cur || !on || cur.looping) return;
+    const d = cur.el.duration, t = cur.el.currentTime;
+    if (d && isFinite(d) && d - t < FADE + 0.3) { cur.looping = true; start(cur.src); }
+  }, 300);
+
+  document.addEventListener('visibilitychange', () => {
+    if (!cur) return;
+    if (document.hidden) cur.el.pause();
+    else if (on) cur.el.play().catch(() => {});
+  });
+
+  window.MUSIC = {
+    unlock() {
+      if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ctx = null; } }
+      if (ctx && ctx.state === 'suspended') ctx.resume();
+      unlocked = true; sync();
+    },
+    play(key) { want = key; sync(); },
+    setOn(v) { on = v; sync(); },
+    state: () => ({ on, want, src: cur && cur.src, unlocked })
+  };
+})();
+
+</script>
+<script>
 /* =========================================================
    story.js — 剧情数据（与渲染完全分离）
    beat 字段：
@@ -1101,10 +1219,10 @@ window.STORY = {
             act: { type: 'tap', hit: 'ticket', hint: '点击电子门票，检票入场', add: ['checked'], wait: 1600, sfx: 'chime' } },
           { shot: 'hall', rm: ['phone'], cam: [50, 52, 1], lines: ['以前总觉得，那些演出离我的生活很远，好像只能隔着屏幕看看。', '可现在，我真的坐在这里了。'] },
           { add: ['dim'], camT: 3, lines: ['灯光暗下来的那一刻，整个大厅都安静了。'],
-            act: { type: 'tap', hit: 'stage', hint: '点击舞台', add: ['spot', 'play'], cam: [50, 40, 1.26], camT: 9, wait: 2400, sfx: 'music' } },
+            act: { type: 'tap', hit: 'stage', hint: '点击舞台', add: ['spot', 'play'], cam: [50, 40, 1.26], camT: 9, wait: 2400 } },
           { lines: ['熟悉的旋律响起来时，我坐在座位上，几乎忘了呼吸。'] },
           { cam: [50, 44, 1.12], camT: 5, lines: ['周围的人和我一样，认真听着台上的演出。', '那一瞬间，我突然觉得，当初决定来到这座城市，真好。'] },
-          { shot: 'street', rm: ['play'], cam: [50, 50, 1.02], sfx: 'stopmusic', lines: ['散场的时候，外面的夜风有点凉。', '我一个人慢慢往地铁站走。'] },
+          { shot: 'street', rm: ['play'], cam: [50, 50, 1.02], lines: ['散场的时候，外面的夜风有点凉。', '我一个人慢慢往地铁站走。'] },
           { cam: [50, 56, 1.14], camT: 8, lines: ['路边的灯光映在地上，耳边仿佛还回荡着刚才的旋律。', '今晚的快乐，好像可以记很久。'] }
         ] },
         { id: 'c4', no: '第四幕', title: '一个人的周末', scene: 'gallery', beats: [
@@ -2133,7 +2251,7 @@ window.STORY = {
   }
   function startPrologue(atRoad) {
     S.screen = 'prologue'; S.route = null; S.actIdx = 0;
-    AUDIO.theme('night');
+    MUSIC.play('prologue');
     $('#progress').classList.remove('on');
     mountScene('prologue');
     runBeat(atRoad ? STORY.prologue.beats.length - 1 : 0);
@@ -2144,7 +2262,7 @@ window.STORY = {
   }
   function startAct() {
     const R = STORY.routes[S.route], A = R.acts[S.actIdx];
-    AUDIO.theme(S.route);
+    MUSIC.play(A.id);
     save();
     updateProgress();
     clearHits(); setCap('hidden');
@@ -2390,7 +2508,7 @@ window.STORY = {
     clearHits(); setCap('hidden');
     $('#progress').classList.remove('on');
     const E = STORY.endings[route];
-    AUDIO.theme('end');
+    MUSIC.play(route === 'home' ? 'endHome' : 'endFar');
     const root = mountScene(E.scene);
     root.classList.add('ending');
     const panel = document.createElement('div');
@@ -2406,6 +2524,7 @@ window.STORY = {
 
   function showFinale() {
     S.screen = 'finale'; save();
+    MUSIC.play('finale');
     clearHits();
     const root = mountScene('finale');
     root.classList.add('finale');
@@ -2448,7 +2567,7 @@ window.STORY = {
   function restart() { S.token++; clearHits(); closeMenu(); showTitle(); }
   function showTitle() {
     S.screen = 'title'; S.route = null;
-    AUDIO.theme('night');
+    MUSIC.play('prologue');
     $('#progress').classList.remove('on');
     setCap('hidden');
     mountScene('title');
@@ -2464,7 +2583,7 @@ window.STORY = {
     $('#titleUi').classList.add('on');
   }
   function begin(fn) {
-    AUDIO.unlock();
+    AUDIO.unlock(); MUSIC.unlock();
     $('#titleUi').classList.remove('on');
     setTimeout(fn, 500);
   }
@@ -2475,11 +2594,11 @@ window.STORY = {
   $('#menuBtn').onclick = openMenu;
   $('#menuClose').onclick = closeMenu;
   $('#menu').addEventListener('click', e => { if (e.target.id === 'menu') closeMenu(); });
-  $('#mRoad').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); startPrologue(true); };
+  $('#mRoad').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); MUSIC.unlock(); startPrologue(true); };
   $('#mRestart').onclick = () => { try { localStorage.removeItem(KEY); } catch (e) {} restart(); };
-  $('#mHome').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); startRoute('home', 0); };
-  $('#mFar').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); startRoute('far', 0); };
-  $('#sound').onclick = () => { const on = AUDIO.toggle(); $('#sound').classList.toggle('off', !on); $('#sound').setAttribute('aria-label', on ? '关闭声音' : '开启声音'); toast(on ? '声音已开启' : '已静音'); };
+  $('#mHome').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); MUSIC.unlock(); startRoute('home', 0); };
+  $('#mFar').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); MUSIC.unlock(); startRoute('far', 0); };
+  $('#sound').onclick = () => { const on = AUDIO.toggle(); MUSIC.setOn(on); $('#sound').classList.toggle('off', !on); $('#sound').setAttribute('aria-label', on ? '关闭声音' : '开启声音'); toast(on ? '声音已开启' : '已静音'); };
   /* 轻触画面任意位置继续：只在当前这一拍没有待完成的互动时生效 */
   let lastTap = 0;
   app.addEventListener('click', e => {

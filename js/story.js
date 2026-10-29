@@ -115,10 +115,10 @@ window.STORY = {
             act: { type: 'tap', hit: 'ticket', hint: '点击电子门票，检票入场', add: ['checked'], wait: 1600, sfx: 'chime' } },
           { shot: 'hall', rm: ['phone'], cam: [50, 52, 1], lines: ['以前总觉得，那些演出离我的生活很远，好像只能隔着屏幕看看。', '可现在，我真的坐在这里了。'] },
           { add: ['dim'], camT: 3, lines: ['灯光暗下来的那一刻，整个大厅都安静了。'],
-            act: { type: 'tap', hit: 'stage', hint: '点击舞台', add: ['spot', 'play'], cam: [50, 40, 1.26], camT: 9, wait: 2400, sfx: 'music' } },
+            act: { type: 'tap', hit: 'stage', hint: '点击舞台', add: ['spot', 'play'], cam: [50, 40, 1.26], camT: 9, wait: 2400 } },
           { lines: ['熟悉的旋律响起来时，我坐在座位上，几乎忘了呼吸。'] },
           { cam: [50, 44, 1.12], camT: 5, lines: ['周围的人和我一样，认真听着台上的演出。', '那一瞬间，我突然觉得，当初决定来到这座城市，真好。'] },
-          { shot: 'street', rm: ['play'], cam: [50, 50, 1.02], sfx: 'stopmusic', lines: ['散场的时候，外面的夜风有点凉。', '我一个人慢慢往地铁站走。'] },
+          { shot: 'street', rm: ['play'], cam: [50, 50, 1.02], lines: ['散场的时候，外面的夜风有点凉。', '我一个人慢慢往地铁站走。'] },
           { cam: [50, 56, 1.14], camT: 8, lines: ['路边的灯光映在地上，耳边仿佛还回荡着刚才的旋律。', '今晚的快乐，好像可以记很久。'] }
         ] },
         { id: 'c4', no: '第四幕', title: '一个人的周末', scene: 'gallery', beats: [

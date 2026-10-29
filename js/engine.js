@@ -97,7 +97,7 @@
   }
   function startPrologue(atRoad) {
     S.screen = 'prologue'; S.route = null; S.actIdx = 0;
-    AUDIO.theme('night');
+    MUSIC.play('prologue');
     $('#progress').classList.remove('on');
     mountScene('prologue');
     runBeat(atRoad ? STORY.prologue.beats.length - 1 : 0);
@@ -108,7 +108,7 @@
   }
   function startAct() {
     const R = STORY.routes[S.route], A = R.acts[S.actIdx];
-    AUDIO.theme(S.route);
+    MUSIC.play(A.id);
     save();
     updateProgress();
     clearHits(); setCap('hidden');
@@ -354,7 +354,7 @@
     clearHits(); setCap('hidden');
     $('#progress').classList.remove('on');
     const E = STORY.endings[route];
-    AUDIO.theme('end');
+    MUSIC.play(route === 'home' ? 'endHome' : 'endFar');
     const root = mountScene(E.scene);
     root.classList.add('ending');
     const panel = document.createElement('div');
@@ -370,6 +370,7 @@
 
   function showFinale() {
     S.screen = 'finale'; save();
+    MUSIC.play('finale');
     clearHits();
     const root = mountScene('finale');
     root.classList.add('finale');
@@ -412,7 +413,7 @@
   function restart() { S.token++; clearHits(); closeMenu(); showTitle(); }
   function showTitle() {
     S.screen = 'title'; S.route = null;
-    AUDIO.theme('night');
+    MUSIC.play('prologue');
     $('#progress').classList.remove('on');
     setCap('hidden');
     mountScene('title');
@@ -428,7 +429,7 @@
     $('#titleUi').classList.add('on');
   }
   function begin(fn) {
-    AUDIO.unlock();
+    AUDIO.unlock(); MUSIC.unlock();
     $('#titleUi').classList.remove('on');
     setTimeout(fn, 500);
   }
@@ -439,11 +440,11 @@
   $('#menuBtn').onclick = openMenu;
   $('#menuClose').onclick = closeMenu;
   $('#menu').addEventListener('click', e => { if (e.target.id === 'menu') closeMenu(); });
-  $('#mRoad').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); startPrologue(true); };
+  $('#mRoad').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); MUSIC.unlock(); startPrologue(true); };
   $('#mRestart').onclick = () => { try { localStorage.removeItem(KEY); } catch (e) {} restart(); };
-  $('#mHome').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); startRoute('home', 0); };
-  $('#mFar').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); startRoute('far', 0); };
-  $('#sound').onclick = () => { const on = AUDIO.toggle(); $('#sound').classList.toggle('off', !on); $('#sound').setAttribute('aria-label', on ? '关闭声音' : '开启声音'); toast(on ? '声音已开启' : '已静音'); };
+  $('#mHome').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); MUSIC.unlock(); startRoute('home', 0); };
+  $('#mFar').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); MUSIC.unlock(); startRoute('far', 0); };
+  $('#sound').onclick = () => { const on = AUDIO.toggle(); MUSIC.setOn(on); $('#sound').classList.toggle('off', !on); $('#sound').setAttribute('aria-label', on ? '关闭声音' : '开启声音'); toast(on ? '声音已开启' : '已静音'); };
   /* 轻触画面任意位置继续：只在当前这一拍没有待完成的互动时生效 */
   let lastTap = 0;
   app.addEventListener('click', e => {
