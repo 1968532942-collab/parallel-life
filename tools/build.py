@@ -11,8 +11,8 @@ def js(m):
     code = open(os.path.join(ROOT, m.group(1)), encoding='utf-8').read().replace('</script', '<\\/script')
     return '<script>\n' + code + '\n</script>'
 
-out = re.sub(r'<link rel="stylesheet" href="([^"]+)">', css, src)
-out = re.sub(r'<script src="([^"]+)"></script>', js, out)
+out = re.sub(r'<link rel="stylesheet" href="([^"?]+)(?:\?v=\d+)?">', css, src)
+out = re.sub(r'<script src="([^"?]+)(?:\?v=\d+)?"></script>', js, out)
 os.makedirs(os.path.join(ROOT, 'dist'), exist_ok=True)
 dst = os.path.join(ROOT, 'dist', 'index.html')
 open(dst, 'w', encoding='utf-8').write(out)

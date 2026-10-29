@@ -10,11 +10,12 @@
   const AR = 941 / 1672;
 
   /* 一张插画 + 叠加层；extra 里的元素用 frame 百分比坐标 */
+  const Q = window.ASSET_V ? '?v=' + window.ASSET_V : '';
   const frame = (img, extra, opt) => {
     opt = opt || {};
-    return `<div class="frame ${opt.cls || ''}" data-ar="${opt.ar || AR}"><img class="bg" src="${A}${img}.webp" alt="" draggable="false">${extra || ''}</div>`;
+    return `<div class="frame ${opt.cls || ''}" data-ar="${opt.ar || AR}"><img class="bg" src="${A}${img}.webp${Q}" alt="" draggable="false">${extra || ''}</div>`;
   };
-  const layer = (img, cls, style) => `<img class="lay ${cls || ''}" src="${A}${img}.webp" alt="" draggable="false" style="${style || ''}">`;
+  const layer = (img, cls, style) => `<img class="lay ${cls || ''}" src="${A}${img}.webp${Q}" alt="" draggable="false" style="${style || ''}">`;
   const hit = (name, x, y, w, h) => `<i class="hitbox" data-hit="${name}" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%"></i>`;
   const shot = (name, inner, extra) => U.shot(name, inner, extra);
   const steam = (x, y, w) => `<svg class="steam-ov" viewBox="0 0 100 120" style="left:${x}%;top:${y}%;width:${w}%"><g class="steam"><path class="wisp" d="M30 110q-10 -26 4 -52t-4 -50" stroke="#fffaf0" stroke-width="10"/><path class="wisp" d="M52 112q12 -30 -4 -58t6 -50" stroke="#fffaf0" stroke-width="12"/><path class="wisp" d="M72 110q-10 -26 4 -54t-2 -48" stroke="#fffaf0" stroke-width="10"/></g></svg>`;
