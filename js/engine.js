@@ -97,6 +97,7 @@
   }
   function startPrologue(atRoad) {
     S.screen = 'prologue'; S.route = null; S.actIdx = 0;
+    AUDIO.theme('night');
     $('#progress').classList.remove('on');
     mountScene('prologue');
     runBeat(atRoad ? STORY.prologue.beats.length - 1 : 0);
@@ -107,6 +108,7 @@
   }
   function startAct() {
     const R = STORY.routes[S.route], A = R.acts[S.actIdx];
+    AUDIO.theme(S.route);
     save();
     updateProgress();
     clearHits(); setCap('hidden');
@@ -352,6 +354,7 @@
     clearHits(); setCap('hidden');
     $('#progress').classList.remove('on');
     const E = STORY.endings[route];
+    AUDIO.theme('end');
     const root = mountScene(E.scene);
     root.classList.add('ending');
     const panel = document.createElement('div');
@@ -409,6 +412,7 @@
   function restart() { S.token++; clearHits(); closeMenu(); showTitle(); }
   function showTitle() {
     S.screen = 'title'; S.route = null;
+    AUDIO.theme('night');
     $('#progress').classList.remove('on');
     setCap('hidden');
     mountScene('title');
