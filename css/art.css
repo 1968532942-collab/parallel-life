@@ -141,3 +141,9 @@
 .win-streaks .mv.near i { display: block; width: 140px; height: 100%; background: linear-gradient(90deg, transparent 0 86%, #ffffff10 86% 90%, transparent 90%); }
 .reflect-glow { position: absolute; left: 60%; top: 23%; width: 22%; height: 16%; border-radius: 50%; background: radial-gradient(ellipse, #fff4dc66, transparent 70%); mix-blend-mode: screen; opacity: 0; transition: opacity 2.2s; pointer-events: none; }
 .f-reflect .reflect-glow { opacity: 1; }
+
+/* 视频层：播放后淡入盖住同构图的插画 */
+.frame > video.vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.4s ease; pointer-events: none; }
+.frame > video.vid.playing { opacity: 1; }
+.frame > video.vid.gone { opacity: 0; transition: opacity 3s ease; }
+.frame > video.vid.playing ~ .family-wrap, .frame > video.vid.playing ~ .students-wrap { opacity: 0 !important; animation: none; transition: opacity 1.2s; }

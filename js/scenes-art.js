@@ -18,6 +18,8 @@
   const layer = (img, cls, style) => `<img class="lay ${cls || ''}" src="${A}${img}.webp${Q}" alt="" draggable="false" style="${style || ''}">`;
   const hit = (name, x, y, w, h) => `<i class="hitbox" data-hit="${name}" style="left:${x}%;top:${y}%;width:${w}%;height:${h}%"></i>`;
   const shot = (name, inner, extra) => U.shot(name, inner, extra);
+  /* 视频层：on = 'mount'（场景出现即播放）或某个状态标记；mode = loop（无缝循环）/ once（播一次停在最后一帧）；off = 让视频淡出的标记 */
+  const vid = (name, mode, on, off, hold) => `<video class="vid" data-mode="${mode}" data-on="${on}"${off ? ` data-off="${off}"` : ''}${hold ? ` data-hold="${hold}"` : ''} src="video/${name}.mp4${Q}" muted playsinline webkit-playsinline preload="auto"${mode === 'loop' ? ' loop' : ''}></video>`;
   const steam = (x, y, w) => `<svg class="steam-ov" viewBox="0 0 100 120" style="left:${x}%;top:${y}%;width:${w}%"><g class="steam"><path class="wisp" d="M30 110q-10 -26 4 -52t-4 -50" stroke="#fffaf0" stroke-width="10"/><path class="wisp" d="M52 112q12 -30 -4 -58t6 -50" stroke="#fffaf0" stroke-width="12"/><path class="wisp" d="M72 110q-10 -26 4 -54t-2 -48" stroke="#fffaf0" stroke-width="10"/></g></svg>`;
 
   /* 第一人称：拿手机的手（插画），屏幕内容叠在手机黑屏的位置上 */
@@ -67,8 +69,8 @@
   /* ---------------- 家乡二：晚风、校门、闪回 ---------------- */
   SCENES.walk = {
     build() {
-      const walk = frame('h2_walk', `<div class="family-wrap">${layer('h2_family', 'family walker')}</div>`);
-      const gate = frame('h2_gate', hit('gate', 34, 34, 32, 26) + `<div class="students-wrap">${layer('h2_students', 'students walker')}</div>`);
+      const walk = frame('h2_walk', vid('v_walk', 'loop', 'mount') + `<div class="family-wrap">${layer('h2_family', 'family walker')}</div>`);
+      const gate = frame('h2_gate', hit('gate', 34, 34, 32, 26) + vid('v_gate', 'once', 'out', 'far') + `<div class="students-wrap">${layer('h2_students', 'students walker')}</div>`);
       const flash = frame('h2_flash');
       return { cam: shot('walk', walk, U.fall('leaf', 9, { t0: 11, t1: 17, s0: 9, s1: 14 })) + shot('gate', gate, U.fall('leaf', 5, { t0: 13, t1: 18, s0: 8, s1: 12 })) + shot('flash', flash, '<div class="flash-frame"></div>' + U.fall('glow', 14, { t0: 12, t1: 18, s0: 2, s1: 5 })) };
     }
@@ -78,7 +80,7 @@
   SCENES.noodle = {
     build() {
       const ext = frame('h3_outside', layer('h3_outside_open', 'door-open') + hit('door', 30, 32, 40, 40));
-      const int = frame('h3_inside', `<div class="bowl-g" data-hit="bowl" style="left:24%;top:63%;width:52%">${layer('h3_bowl', '', 'position:static;width:100%')}</div>` + `<div class="steam big" style="position:absolute;left:30%;top:44%;width:40%">${steam(0, 0, 100).replace('class="steam-ov"', 'class="steam-ov" style="position:static;width:100%"')}</div>` + steam(64, 14, 14).replace('<svg', '<svg data-idle="1"'));
+      const int = frame('h3_inside', vid('v_noodle', 'loop', 'open') + `<div class="bowl-g" data-hit="bowl" style="left:24%;top:63%;width:52%">${layer('h3_bowl', '', 'position:static;width:100%')}</div>` + `<div class="steam big" style="position:absolute;left:30%;top:44%;width:40%">${steam(0, 0, 100).replace('class="steam-ov"', 'class="steam-ov" style="position:static;width:100%"')}</div>` + steam(64, 14, 14).replace('<svg', '<svg data-idle="1"'));
       return { cam: shot('ext', ext, U.fall('snow', 26, { t0: 9, t1: 15, s0: 2, s1: 5 })) + shot('int', int) };
     }
   };
@@ -150,8 +152,8 @@
   SCENES.concert = {
     build() {
       const ticket = `<div class="ticket" data-hit="ticket"><div class="tk-head">电子门票</div><div class="tk-name">城市之夜 · 室内乐音乐会</div><div class="tk-row"><span>周六 19:30</span><span>二楼 · 后排 27 座</span></div><div class="qr">${Array.from({ length: 49 }, (_, i) => `<i class="${(i * 7 + (i >> 2)) % 3 ? '' : 'b'}${[0, 1, 7, 8, 5, 6, 12, 13, 35, 36, 42, 43].includes(i) ? ' b' : ''}"></i>`).join('')}</div><div class="tk-stamp">已检票 ✓</div></div>`;
-      const hall = frame('c3_hall', layer('c3_hall_dark', 'hall-dark') + '<div class="house-dim"></div><div class="stage-glow"></div>' + hit('stage', 30, 38, 40, 20));
-      return { cam: shot('ticket', frame('c3_lobby')) + shot('hall', hall, U.fall('glow', 10, { t0: 16, t1: 24, s0: 2, s1: 3, cls: 'dust' })) + shot('street', frame('c3_street')), fp: `<div class="fp-phone">${FIG.phoneHand(ticket)}</div>` };
+      const hall = frame('c3_hall', layer('c3_hall_dark', 'hall-dark') + vid('v_concert', 'loop', 'play') + '<div class="house-dim"></div><div class="stage-glow"></div>' + hit('stage', 30, 38, 40, 20));
+      return { cam: shot('ticket', frame('c3_lobby', vid('v_lobby', 'loop', 'mount'))) + shot('hall', hall, U.fall('glow', 10, { t0: 16, t1: 24, s0: 2, s1: 3, cls: 'dust' })) + shot('street', frame('c3_street')), fp: `<div class="fp-phone">${FIG.phoneHand(ticket)}</div>` };
     }
   };
 
@@ -168,15 +170,47 @@
   /* ---------------- 远方五：夜宵 ---------------- */
   SCENES.friends = {
     build() {
-      const table = frame('c5_table', hit('cups', 24, 34, 52, 16) + '<div class="spark-ring"></div><div class="ask-bubble">下周有空吗？我们再约！</div><div class="laugh-light"></div>');
+      const table = frame('c5_table', vid('v_cheers', 'once', 'cheers') + hit('cups', 24, 34, 52, 16) + '<div class="spark-ring"></div><div class="ask-bubble">下周有空吗？我们再约！</div><div class="laugh-light"></div>');
       return { cam: shot('table', table) + shot('night', frame('c5_walk')) };
     }
   };
 
   /* ---------------- 结局与终章 ---------------- */
-  SCENES.endHome = { build() { return { cam: U.shot('e', frame('end_home'), U.fall('osm', 14, { t0: 10, t1: 15, s0: 4, s1: 7, to: 60 })) }; } };
-  SCENES.endFar = { build() { return { cam: U.shot('e', frame('end_far'), U.fall('glow', 12, { t0: 14, t1: 22, s0: 2, s1: 4, to: 60 })) }; } };
+  SCENES.endHome = { build() { return { cam: U.shot('e', frame('end_home', vid('v_end_home', 'once', 'mount')), U.fall('osm', 14, { t0: 10, t1: 15, s0: 4, s1: 7, to: 60 })) }; } };
+  SCENES.endFar = { build() { return { cam: U.shot('e', frame('end_far', vid('v_end_far', 'once', 'mount', null, 3.2)), U.fall('glow', 12, { t0: 14, t1: 22, s0: 2, s1: 4, to: 60 })) }; } };
   SCENES.finale = { build() { return { cam: U.shot('f', frame('finale'), U.fall('glow', 18, { t0: 16, t1: 24, s0: 2, s1: 4 })) }; } };
+
+  /* ---------------- 视频控制 ----------------
+     视频真正开始播放后才淡入盖住插画；手机拒绝播放或加载失败时，插画照常显示，剧情不受影响 */
+  function startVid(v) {
+    if (v.dataset.started) return;
+    v.dataset.started = '1';
+    const show = () => v.classList.add('playing');
+    v.addEventListener('playing', show, { once: true });
+    // 结局等镜头：推到指定时间点就停住，避免主角被下方文字面板挡住
+    if (v.dataset.hold) v.addEventListener('timeupdate', () => { if (v.currentTime >= +v.dataset.hold) { v.pause(); v.dataset.held = '1'; } });
+    v.addEventListener('error', () => v.classList.remove('playing'));
+    try { v.currentTime = 0; } catch (e) {}
+    const p = v.play(); if (p && p.catch) p.catch(() => {});
+  }
+  function vids(root, name, on) {
+    root.querySelectorAll('video.vid').forEach(v => {
+      if (on && v.dataset.on === name) startVid(v);
+      if (on && v.dataset.off === name) v.classList.add('gone');
+    });
+  }
+  Object.keys(SCENES).forEach(k => {
+    const sc = SCENES[k], f0 = sc.flag, e0 = sc.enter, l0 = sc.leave;
+    sc.flag = (root, name, on) => { vids(root, name, on); if (f0) f0(root, name, on); };
+    sc.enter = root => { root.querySelectorAll('video.vid[data-on="mount"]').forEach(startVid); if (e0) e0(root); };
+    sc.leave = root => { root.querySelectorAll('video.vid').forEach(v => { try { v.pause(); } catch (e) {} }); if (l0) l0(root); };
+  });
+  // 切到后台时暂停，回来继续
+  document.addEventListener('visibilitychange', () => {
+    document.querySelectorAll('.act:not(.leaving) video.vid.playing').forEach(v => {
+      if (document.hidden) v.pause(); else if (!v.dataset.held && (v.dataset.mode === 'loop' || !v.ended)) v.play().catch(() => {});
+    });
+  });
 
   /* 海报和地铁倒影使用插画版主角 */
   const hero = new Image(); hero.src = A + 'heroine.webp';
