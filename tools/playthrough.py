@@ -9,7 +9,7 @@ OUT = sys.argv[2]
 W, H = (int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 and sys.argv[3].isdigit() else (390, 844)
 FAST = '--fast' in sys.argv
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-URL = 'file://' + os.path.join(ROOT, sys.argv[5] if len(sys.argv) > 5 and sys.argv[5].endswith('.html') else 'index.html')
+URL = os.environ.get('H5_URL') or 'file://' + os.path.join(ROOT, 'index.html')
 
 async def main():
     os.makedirs(OUT, exist_ok=True)

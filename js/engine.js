@@ -113,6 +113,7 @@
     MUSIC.preload(nextA ? nextA.id : (S.route === 'home' ? 'endHome' : 'endFar'));
     save();
     updateProgress();
+    S.token++; btnNext.hidden = true; btnSkip.hidden = true; // 防止连点把下一幕也跳过
     clearHits(); setCap('hidden');
     mountScene(A.scene, A.init);
     titleCard(A.no, A.title, R.name, () => runBeat(0));
@@ -288,7 +289,6 @@
   function dragLogic(a, tok) {
     const el = target(a.hit), drop = target(a.drop);
     if (!el || !drop) { completeAct(a, tok); return; }
-    const svg = el.ownerSVGElement;
     const handle = document.createElement('div');
     handle.className = 'hit drag';
     handle.innerHTML = '<span class="ring"></span><span class="drag-arrow"></span>';
@@ -299,25 +299,24 @@
     const posDz = () => { const r = drop.getBoundingClientRect(), ap = app.getBoundingClientRect(); Object.assign(dz.style, { left: r.left - ap.left + 'px', top: r.top - ap.top + 'px', width: r.width + 'px', height: r.height + 'px' }); };
     posDz();
     track(el, handle, 90, 90);
-    let start = null, base = { x: 0, y: 0 };
-    const toSvg = (cx, cy) => { const p = svg.createSVGPoint(); p.x = cx; p.y = cy; return p.matrixTransform(svg.getScreenCTM().inverse()); };
-    handle.addEventListener('pointerdown', e => { start = toSvg(e.clientX, e.clientY); handle.setPointerCapture(e.pointerId); el.style.transition = 'none'; handle.classList.add('grab'); AUDIO.sfx('roll'); });
+    // 拖动距离要除以镜头缩放，物体才能精确跟手
+    const scale = () => { const w = el.offsetWidth || (el.getBBox && el.getBBox().width) || 1; return el.getBoundingClientRect().width / w || 1; };
+    let start = null, k = 1;
+    handle.addEventListener('pointerdown', e => { start = { x: e.clientX, y: e.clientY }; k = scale(); handle.setPointerCapture(e.pointerId); el.style.transition = 'none'; handle.classList.add('grab'); AUDIO.sfx('roll'); });
     handle.addEventListener('pointermove', e => {
       if (!start) return;
-      const p = toSvg(e.clientX, e.clientY);
-      base = { x: p.x - start.x, y: p.y - start.y };
-      el.style.transform = `translate(${base.x}px, ${base.y}px)`;
+      el.style.transform = `translate(${(e.clientX - start.x) / k}px, ${(e.clientY - start.y) / k}px)`;
       posDz();
     });
-    const end = e => {
+    const end = () => {
       if (!start) return;
       start = null; handle.classList.remove('grab');
       const r = drop.getBoundingClientRect(), er = el.getBoundingClientRect();
-      const cx = er.left + er.width / 2, cy = er.top + er.height / 2;
-      const inside = cx > r.left - 30 && cx < r.right + 30 && cy > r.top - 40 && cy < r.bottom + 40;
-      el.style.transition = 'transform .6s cubic-bezier(.2,.8,.2,1)';
+      const cx = er.left + er.width / 2, cy = er.bottom - er.height * .15;
+      const inside = cx > r.left - 30 && cx < r.right + 30 && cy > r.top - 40 && cy < r.bottom + 50;
+      el.style.transition = 'transform .6s cubic-bezier(.2,.8,.2,1), opacity .6s';
       if (inside) {
-        el.style.transform = '';
+        // 停在放下的位置，不弹回
         completeAct(a, tok);
       } else {
         el.style.transform = 'translate(0px,0px)';
@@ -356,6 +355,7 @@
   /* ---------- 结局 / 终章 ---------- */
   function showEnding(route) {
     S.screen = 'ending'; S.done[route] = true; save();
+    S.token++; btnNext.hidden = true;
     clearHits(); setCap('hidden');
     $('#progress').classList.remove('on');
     const E = STORY.endings[route];

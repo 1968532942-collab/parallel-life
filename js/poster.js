@@ -19,9 +19,19 @@
     const g = c.getContext('2d');
     g.fillStyle = '#0a1322'; g.fillRect(0, 0, 1080, 1920);
     try {
-      const art = r === 'home' ? window.HOME_NIGHT(true) : window.CITY_NIGHT(true);
-      const img = await svgImage(art, 1080, 1300);
-      g.drawImage(img, 0, 0, 1080, 1300);
+      if (window.POSTER_ART && !window.POSTER_ART_BLOCKED) {
+        // 插画版：按 cover 方式裁进上方 1300px
+        const img = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = window.POSTER_ART[r]; });
+        const sw = img.naturalWidth, sh = img.naturalWidth * 1300 / 1080;
+        g.drawImage(img, 0, Math.max(0, (img.naturalHeight - sh) * .35), sw, Math.min(sh, img.naturalHeight), 0, 0, 1080, 1300);
+        // 本地直接双击打开（file://）时浏览器不允许导出插画，退回矢量背景
+        try { g.getImageData(0, 0, 1, 1); } catch (e) { window.POSTER_ART_BLOCKED = true; return draw(r); }
+      }
+      if (!window.POSTER_ART || window.POSTER_ART_BLOCKED) {
+        const art = r === 'home' ? window.HOME_NIGHT(true) : window.CITY_NIGHT(true);
+        const img = await svgImage(art, 1080, 1300);
+        g.drawImage(img, 0, 0, 1080, 1300);
+      }
     } catch (e) { /* 背景绘制失败时保留纯色底，文字照常输出 */ }
     // 飘落的桂花 / 城市微光（少量点缀）
     let seed = r === 'home' ? 3 : 9; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
