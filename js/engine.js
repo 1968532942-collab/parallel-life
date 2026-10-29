@@ -145,7 +145,7 @@
       btnNext.hidden = true;
       setupAct(b.act, tok);
     } else {
-      setCap(b.letter ? 'bare' : (b.lines && b.lines.length ? '' : 'slim'));
+      setCap((b.letter ? 'bare' : (b.lines && b.lines.length ? '' : 'slim')) + ' tapnext');
       capHint.textContent = '';
       btnNext.hidden = false;
       btnNext.textContent = isLast ? (S.screen === 'act' ? (S.actIdx === STORY.routes[S.route].acts.length - 1 ? '走向结局 →' : '下一幕 →') : '继续 →') : '继续';
@@ -444,6 +444,15 @@
   $('#mHome').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); startRoute('home', 0); };
   $('#mFar').onclick = () => { closeMenu(); $('#titleUi').classList.remove('on'); AUDIO.unlock(); startRoute('far', 0); };
   $('#sound').onclick = () => { const on = AUDIO.toggle(); $('#sound').classList.toggle('off', !on); $('#sound').setAttribute('aria-label', on ? '关闭声音' : '开启声音'); toast(on ? '声音已开启' : '已静音'); };
+  /* 轻触画面任意位置继续：只在当前这一拍没有待完成的互动时生效 */
+  let lastTap = 0;
+  app.addEventListener('click', e => {
+    if (btnNext.hidden || S.screen === 'title' || S.screen === 'ending') return;
+    if (e.target.closest('button, a, .topbar, .menu, .poster-modal, .chapter.on, .title-ui, .end-panel, #hits > *')) return;
+    if ($('#chapter').classList.contains('on') || $('#menu').classList.contains('on') || $('#posterModal').classList.contains('open')) return;
+    const now = Date.now(); if (now - lastTap < 380) return; lastTap = now;
+    btnNext.click();
+  });
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeMenu(); POSTER.close(); }
     if ((e.key === 'ArrowRight' || e.key === 'Enter') && !btnNext.hidden && document.activeElement === document.body) btnNext.click();

@@ -108,7 +108,12 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 .cap-hint:empty { visibility: hidden; }
 .cap-hint::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); animation: blink 1.4s ease-in-out infinite; flex: none; }
 @keyframes blink { 50% { opacity: .3; } }
-.cap .next { margin-left: auto; min-width: 104px; min-height: 44px; padding: 0 20px; border: 1px solid #e6c6907a; background: #e6c69018; color: #f6e6c8; letter-spacing: .14em; font-size: 13px; border-radius: 22px; }
+.cap .next { margin-left: auto; min-height: 44px; padding: 0 4px 0 14px; border: 0; background: none; color: #e9cf9fdd; letter-spacing: .14em; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.cap .next::after { content: "›"; font-size: 20px; line-height: 1; animation: nudge 1.6s ease-in-out infinite; }
+@keyframes nudge { 50% { transform: translateX(4px); opacity: .5; } }
+.cap.tapnext .cap-foot::before { content: "轻触画面继续"; flex: 1; font-size: 11px; letter-spacing: .2em; color: #ffffff59; animation: blink 2.4s ease-in-out infinite; }
+.cap.tapnext .cap-hint { display: none; }
+.cap.bare.tapnext .cap-foot { justify-content: space-between; }
 .cap .next:active { transform: scale(.96); }
 .cap.bare .cap-foot { justify-content: center; }
 .cap.bare .next { margin: 0 auto; }

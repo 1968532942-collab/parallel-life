@@ -77,7 +77,7 @@ tools/playthrough.py  自动走通测试：python3 tools/playthrough.py home 输
 | 14 | 生成并保存海报 | 结局 | 1080×1920 PNG；手机长按保存，电脑点击下载 |
 | 15 | 体验另一条人生 / 从头开始 | 终章 | 进入另一条路线第一幕 / 回到信封 |
 
-所有互动在 7 秒后会出现“跳过互动”，避免卡住。
+所有互动在 7 秒后会出现“跳过互动”，避免卡住。没有互动的段落，轻触画面任意位置即可继续（菜单、按钮、互动提示圈除外）。
 
 自动化测试：`pip install playwright && playwright install chromium`，然后运行
 `python3 tools/playthrough.py home out_home` 与 `python3 tools/playthrough.py far out_far`，会用真实的点击、长按、滑动、拖动走完整条路线并逐拍截图。
