@@ -69,8 +69,13 @@
       if (o.bag === 'backpack') g += `<path d="M-22 -146Q-30 -140 -29 -108L-27 -96L-12 -98L-12 -146Z" fill="${o.bagColor || '#8a4f45'}"/>`;
       g += `<path d="M-12 -150Q2 -156 14 -149L19 ${hem}Q0 ${hem + 5} -16 ${hem}Z" fill="${coat}"/>`;
       g += `<path d="M2 -146Q-2 -120 2 -96" stroke="${coat2}" stroke-width="1.4" fill="none" opacity=".7"/>`;
-      g += `<g class="${o.arm === 'push' ? '' : walk ? 'arm swB' : ''}"><path d="M-3 -146Q-8 -128 -6 -102L1 -100L5 -128Z" fill="${coat2}"/><circle cx="-2" cy="-98" r="4" fill="${SKIN}"/></g>`;
-      if (o.arm === 'push') g += `<path d="M2 -144Q10 -124 26 -112L28 -105L21 -104Q6 -116 -2 -134Z" fill="${coat2}"/><circle cx="28" cy="-107" r="4" fill="${SKIN}"/>`;
+      if (o.arm === 'push') {
+        // 双手向前（推车 / 弹琴 / 做饭）：远侧手臂在身体后面，近侧在前
+        g = `<path d="M-2 -144Q8 -122 22 -110" stroke="${shade(coat2, -14)}" stroke-width="8" stroke-linecap="round" fill="none"/><circle cx="24" cy="-109" r="3.8" fill="${SKIN_D}"/>` + g;
+        g += `<path d="M2 -144Q12 -122 28 -108" stroke="${coat2}" stroke-width="8.5" stroke-linecap="round" fill="none"/><circle cx="30" cy="-107" r="4" fill="${SKIN}"/>`;
+      } else {
+        g += `<g class="${walk ? 'arm swB' : ''}"><path d="M1 -145Q-3 -122 -1 -100" stroke="${coat2}" stroke-width="8.5" stroke-linecap="round" fill="none"/><circle cx="-1" cy="-96" r="4" fill="${SKIN}"/></g>`;
+      }
       if (o.scarf) g += `<path d="M-6 -152Q4 -146 14 -152L14 -144Q4 -139 -6 -145Z" fill="${o.scarf}"/><path d="M-8 -150Q-20 -142 -28 -130Q-18 -134 -6 -144Z" fill="${shade(o.scarf, -12)}" class="scarfTail"/>`;
       g += `<rect x="-1" y="-160" width="8" height="12" fill="${SKIN_D}"/>`;
       g += `<g class="${o.talk ? 'head talk' : 'head'}"><ellipse cx="3" cy="-172" rx="11.5" ry="14" fill="${SKIN}"/><path d="${hairPath(o.hs || 'short', 'side')}" fill="${hair}"/></g>`;
@@ -79,15 +84,25 @@
       g += `<path d="M-20 -150Q0 -157 20 -150L27 ${hem}Q0 ${hem + 6} -27 ${hem}Z" fill="${coat}"/>`;
       if (view === 'front') g += `<path d="M0 -150L0 ${hem + 4}" stroke="${coat2}" stroke-width="1.6" opacity=".8"/><path d="M-9 -152L0 -132L9 -152" fill="${o.inner || shade(coat, 30)}"/>`;
       else g += `<path d="M0 -146L0 ${hem + 3}" stroke="${coat2}" stroke-width="1.2" opacity=".55"/>`;
-      // 手臂
-      const armL = `<path d="M-20 -149Q-30 -138 -30 -108L-27 -86L-20 -88L-18 -120Z" fill="${coat2}"/><circle cx="-24" cy="-83" r="4.3" fill="${SKIN}"/>`;
-      const armR = `<path d="M20 -149Q30 -138 30 -108L27 -86L20 -88L18 -120Z" fill="${coat2}"/><circle cx="24" cy="-83" r="4.3" fill="${SKIN}"/>`;
+      // 手臂：用描边绘制“肩—肘—手”，正背面行走时手臂是前后摆（画面上表现为轻微缩短），不是左右甩
+      const arm = (pts, cls, col, extra) => `<g class="${cls || ''}"><path d="M${pts[0]} ${pts[1]}Q${pts[2]} ${pts[3]} ${pts[4]} ${pts[5]}" stroke="${col || coat2}" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="${pts[4]}" cy="${pts[5] + 3}" r="4.3" fill="${SKIN}"/>${extra || ''}</g>`;
+      const L = [-19, -146, -27, -118, -24, -88], R = [19, -146, 27, -118, 24, -88];
       if (o.arm === 'up') {
-        g += `<g>${armL}</g><g class="arm wave"><path d="M20 -149Q34 -158 40 -178L33 -182Q26 -166 16 -158Z" fill="${coat2}"/><circle cx="37" cy="-184" r="4.3" fill="${SKIN}"/></g>`;
+        g += arm(L) + arm([19, -146, 34, -164, 36, -192]);
       } else if (o.arm === 'table') {
-        g += `<path d="M-20 -149Q-30 -132 -22 -112L-6 -104L-6 -112L-16 -122Z" fill="${coat2}"/><path d="M20 -149Q30 -132 22 -112L6 -104L6 -112L16 -122Z" fill="${coat2}"/><circle cx="-5" cy="-107" r="4" fill="${SKIN}"/><circle cx="5" cy="-107" r="4" fill="${SKIN}"/>`;
+        g += arm([-19, -146, -26, -118, -8, -108]) + arm([19, -146, 26, -118, 8, -108]);
+      } else if (o.arm === 'violin') {
+        // 小提琴架在左肩，左手托琴颈，右手持弓在琴身上来回拉
+        g += `<g transform="rotate(-28 -20 -146)"><ellipse cx="-20" cy="-146" rx="11" ry="6.5" fill="#9a5230"/><path d="M-31 -146H-58" stroke="#3a2416" stroke-width="2.4"/><circle cx="-59" cy="-146" r="2.4" fill="#3a2416"/></g>`;
+        g += arm([-19, -146, -36, -120, -48, -132]);
+        g += `<g class="bowArm">${arm([19, -146, 32, -124, 4, -124], '', null, '<path d="M4 -122L-34 -172" stroke="#efe4cc" stroke-width="1.6"/>')}</g>`;
+      } else if (o.arm === 'cello') {
+        // 大提琴立在两膝之间，左手按琴颈，右手横向运弓
+        g += `<path d="M-2 -76L-8 -136" stroke="#3a2416" stroke-width="3"/><ellipse cx="0" cy="-52" rx="15" ry="25" fill="#8a4a2a"/><path d="M-6 -64h12M-6 -40h12" stroke="#5a2c18" stroke-width="1.4"/><path d="M0 -26V-2" stroke="#3a2416" stroke-width="2"/>`;
+        g += arm([-19, -146, -32, -126, -9, -116]);
+        g += `<g class="bowArm h">${arm([19, -146, 34, -104, 20, -70], '', null, '<path d="M22 -68L-30 -58" stroke="#efe4cc" stroke-width="1.6"/>')}</g>`;
       } else {
-        g += `<g class="${walk ? 'arm swA' : ''}">${armL}</g><g class="${walk ? 'arm swB' : ''}">${armR}</g>`;
+        g += arm(L, walk ? 'arm fbA' : '') + arm(R, walk ? 'arm fbB' : '');
       }
       if (o.bag === 'backpack' && view === 'back') g += `<path d="M-16 -146Q0 -150 16 -146L15 -100Q0 -96 -15 -100Z" fill="${o.bagColor || '#8a4f45'}"/><path d="M-13 -118L13 -118" stroke="#00000033"/>`;
       if (o.bag === 'backpack' && view === 'front') g += `<path d="M-17 -150L-14 -118M17 -150L14 -118" stroke="${o.bagColor || '#8a4f45'}" stroke-width="3.5"/>`;

@@ -145,7 +145,7 @@
         ${person({ x: 66, y: 556, s: .74, view: 'front', sit: true, nod: true }, 1)}${person({ x: 176, y: 556, s: .76, view: 'front', sit: true, hs: 'short', glasses: true }, 4)}
         <path d="M0 560H400V780H0Z" fill="url(#mFloor)"/>
         <rect x="240" y="120" width="8" height="660" fill="#c7ccd4"/><rect x="241" y="120" width="2" height="660" fill="#fff" opacity=".6"/>
-        <g class="leavers">${person({ x: 330, y: 700, s: 1.2, view: 'back', walk: true }, 2)}${person({ x: 380, y: 720, s: 1.24, view: 'back', walk: true, delay: -.5 }, 3)}</g>
+        <g class="leavers"><g class="leaver" style="--lx:-12px;--ly:-104px">${person({ x: 330, y: 700, s: 1.2, view: 'back', walk: true }, 2)}</g><g class="leaver" style="--lx:-44px;--ly:-118px;--ld:.6s">${person({ x: 378, y: 720, s: 1.24, view: 'back', walk: true, delay: -.5 }, 3)}</g></g>
         <g class="arrive-sign"><rect x="60" y="96" width="120" height="22" rx="4" fill="#1a2234"/><text x="120" y="112" text-anchor="middle" font-size="11" fill="#ffd79a" font-family="sans-serif" letter-spacing="2">下一站 · 江湾路</text></g>`);
       const screen = `<div class="chat"><div class="chat-top">家</div><div class="bub in msg-b">今天忙不忙？记得好好吃饭。</div><div class="bub me reply-b">挺好的，不用担心。</div>
         <div class="chat-input"><span class="typed">挺好的，不用担心。</span><button class="send" data-hit="reply" aria-label="回复">回复</button></div><div class="lock">23:41<small>家：今天忙不忙？…</small></div></div>`;
@@ -185,8 +185,8 @@
         <g class="stage-wash"><path d="M60 330H340L370 450H30Z" fill="#ffd9a0" opacity=".14"/></g>
         <g class="spots"><path d="M150 0L90 450H230L180 0Z" fill="url(#spot)"/><path d="M250 0L190 450H320L270 0Z" fill="url(#spot)"/></g>
         <g class="players">
-          <g transform="translate(92 412)"><path d="M0 0V-34H70V-28L60 -26V0Z" fill="#141016"/><path d="M0 -34Q20 -60 60 -40L70 -34Z" fill="#1b1520"/>${F.fig({ x: 84, y: 0, s: .32, view: 'side', flip: true, hs: 'short', coat: '#1b1b22', pants: '#141418', half: true, nod: true })}</g>
-          ${['vln1', 'vln2', 'vla', 'vc'].map((k, i) => `<g transform="translate(${190 + i * 38} ${414})"><g class="player" style="--d:-${i * .4}s">${F.fig({ x: 0, y: 0, s: .34, view: 'front', hs: i % 2 ? 'long' : 'short', coat: '#1d1a22', pants: '#141418', half: true })}${k === 'vc' ? '<ellipse cx="10" cy="-30" rx="9" ry="16" fill="#8a4a2a"/><path d="M10 -46V-14" stroke="#2a1a12" stroke-width="1"/>' : '<ellipse cx="-7" cy="-56" rx="7" ry="4" fill="#8a4a2a" transform="rotate(-24 -7 -56)"/>'}<path class="bow" d="${k === 'vc' ? 'M-6 -32L28 -26' : 'M-12 -60L14 -44'}" stroke="#e9dcc0" stroke-width="1.4"/></g></g>`).join('')}
+          <g transform="translate(92 412)"><path d="M0 0V-34H70V-28L60 -26V0Z" fill="#141016"/><path d="M0 -34Q20 -60 60 -40L70 -34Z" fill="#1b1520"/>${F.fig({ x: 86, y: 0, s: .34, view: 'side', flip: true, hs: 'short', coat: '#1b1b22', coat2: '#141218', pants: '#141418', half: true, nod: true, arm: 'push' })}</g>
+          ${['violin', 'violin', 'violin', 'cello'].map((k, i) => `<g class="player" style="--d:-${(i * .37).toFixed(2)}s"><path d="M${186 + i * 40} 442v-26h18v26" stroke="#2a1a14" stroke-width="2" fill="none"/>${F.fig({ x: 195 + i * 40, y: 444, s: .4, view: 'front', sit: true, arm: k, hs: i % 2 ? 'long' : 'short', hair: '#15151a', coat: '#1d1a22', coat2: '#151219', pants: '#141418' })}</g>`).join('')}
         </g>
         <path d="M0 470H400V780H0Z" fill="#1e1418"/>
         <path d="M0 500Q200 486 400 500V520Q200 506 0 520Z" fill="#7a4a32"/><path d="M0 500Q200 486 400 500" stroke="#d9b06a" stroke-width="2" fill="none"/>
@@ -259,7 +259,7 @@
      ========================================================= */
   SCENES.friends = {
     build() {
-      const friend = (o, i) => F.fig(Object.assign({ half: true, talk: true }, o), i);
+      const friend = (o, i) => F.fig(Object.assign({ talk: true }, o), i);
       const table = U.svg(`<defs>${U.lg('fw', [[0, '#3a2a30'], [1, '#5a3c34']])}${U.rg('fl', [[0, '#ffd9a0', .7], [1, '#ffd9a0', 0]])}${U.rg('neon', [[0, '#ff9a8a', .7], [1, '#ff9a8a', 0]])}</defs>
         <rect width="400" height="780" fill="url(#fw)"/>
         <circle cx="290" cy="170" r="110" fill="url(#neon)"/>
@@ -268,9 +268,10 @@
         <path d="M0 60Q100 90 200 70T400 80" stroke="#6a5040" stroke-width="1.5" fill="none"/>${Array.from({ length: 12 }, (_, i) => `<circle class="twinkle" style="--d:-${i * .3}s" cx="${10 + i * 34}" cy="${68 + Math.sin(i * 1.3) * 8}" r="4" fill="#ffd38a"/>`).join('')}
         <circle cx="200" cy="420" r="200" fill="url(#fl)"/>
         <path d="M0 300H400V780H0Z" fill="#2c1e1e" opacity=".55"/>
-        ${friend({ x: 200, y: 420, s: 1.02, view: 'front', hs: 'short', coat: '#5f6f5a', arm: 'table', delay: -.6 }, 0)}
-        ${friend({ x: 84, y: 450, s: 1.08, view: 'side', hs: 'pony', coat: '#8a5a4a', hair: '#3a2a24' }, 1)}
-        ${friend({ x: 318, y: 452, s: 1.08, view: 'side', flip: true, hs: 'long', coat: '#4a5a7a', delay: -1.2 }, 2)}
+        <path d="M30 360h76v80h-76zM294 360h76v80h-76z" fill="#4a2e26"/><path d="M164 330h72v80h-72z" fill="#43291f"/>
+        ${friend({ x: 200, y: 476, s: .96, view: 'front', sit: true, hs: 'short', coat: '#5f6f5a', arm: 'table', delay: -.6 }, 0)}
+        ${friend({ x: 68, y: 500, s: 1.08, view: 'front', sit: true, hs: 'pony', coat: '#8a5a4a', hair: '#3a2a24', arm: 'table' }, 1)}
+        ${friend({ x: 332, y: 500, s: 1.08, view: 'front', sit: true, hs: 'long', coat: '#4a5a7a', arm: 'table', delay: -1.2 }, 2)}
         <ellipse cx="200" cy="470" rx="190" ry="54" fill="#8a5a3a"/><ellipse cx="200" cy="462" rx="182" ry="48" fill="#a06a44"/>
         <ellipse cx="140" cy="456" rx="34" ry="10" fill="#efe6d6"/>${[0, 1, 2, 3, 4].map(i => `<path d="M${118 + i * 10} 452l14 -18" stroke="#b9875a" stroke-width="2.4"/><circle cx="${126 + i * 10}" cy="${444 - i}" r="3" fill="#8a3a2a"/>`).join('')}
         <ellipse cx="250" cy="452" rx="30" ry="10" fill="#efe6d6"/><ellipse cx="250" cy="448" rx="22" ry="6" fill="#d98a4a"/>

@@ -138,9 +138,9 @@
         <path d="M250 260h100v-20q-10 -14 -50 -14t-50 14z" fill="#8f8a84"/>
         <g class="steam idle"><path class="wisp" d="M282 224q-10 -20 4 -40t-2 -40" stroke="#fff7ea" stroke-width="10"/><path class="wisp" d="M312 222q12 -22 -2 -44t6 -40" stroke="#fff7ea" stroke-width="10"/></g>
         <path d="M0 370H400V780H0Z" fill="#4a3428"/>
-        <path d="M20 340H170V362H20Z" fill="#8a6a4a"/><path d="M28 362V420M162 362V420" stroke="#6a4f36" stroke-width="5"/>
-        ${student({ x: 50, y: 352, s: .62, view: 'side', half: true, talk: true }, 1)}${student({ x: 96, y: 348, s: .64, view: 'front', half: true, talk: true, delay: -1 }, 2)}${student({ x: 144, y: 352, s: .62, view: 'side', half: true, flip: true, nod: true }, 4)}
-        <ellipse cx="70" cy="340" rx="12" ry="4" fill="#eee2cc"/><ellipse cx="124" cy="340" rx="12" ry="4" fill="#eee2cc"/>
+        ${student({ x: 46, y: 400, s: .6, view: 'front', sit: true, arm: 'table', talk: true }, 1)}${student({ x: 96, y: 396, s: .6, view: 'front', sit: true, arm: 'table', talk: true, delay: -1 }, 2)}${student({ x: 146, y: 400, s: .6, view: 'front', sit: true, arm: 'table', nod: true }, 4)}
+        ${[46, 96, 146].map(x => `<path d="M${x - 13} 372h26v4h-26zM${x - 10} 376v24M${x + 10} 376v24" stroke="#5a4030" stroke-width="2.5" fill="#6d4f38"/>`).join('')}<path d="M14 352H178V370H14Z" fill="#8a6a4a"/><path d="M22 370V420M170 370V420" stroke="#6a4f36" stroke-width="5"/>
+        <ellipse cx="70" cy="352" rx="12" ry="4" fill="#eee2cc"/><ellipse cx="124" cy="352" rx="12" ry="4" fill="#eee2cc"/>
         <path d="M-10 470Q200 440 410 470L420 780H-20Z" fill="#9a6e4c"/><path d="M-10 470Q200 440 410 470" stroke="#c89a6c" stroke-width="3" fill="none"/>
         <g class="bowl-g" data-hit="bowl">
           <ellipse cx="200" cy="476" rx="98" ry="22" fill="#00000033"/>

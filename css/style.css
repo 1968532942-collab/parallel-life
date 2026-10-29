@@ -47,8 +47,12 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 }
 .fig .leg, .fig .arm, .heroine .leg { transform-box: fill-box; transform-origin: 50% 0; }
 .walking .swA { animation: swingA 1.1s ease-in-out infinite alternate; }
+.bowArm { transform-box: view-box; }
 .walking .swB { animation: swingA 1.1s ease-in-out infinite alternate-reverse; }
 @keyframes swingA { from { transform: rotate(-16deg); } to { transform: rotate(16deg); } }
+.walking .fbA { animation: fbSwing 1.1s ease-in-out infinite alternate; }
+.walking .fbB { animation: fbSwing 1.1s ease-in-out infinite alternate-reverse; }
+@keyframes fbSwing { from { transform: translateY(0) scaleY(1); } to { transform: translateY(-1.5px) scaleY(.9); } }
 .walking .upA { animation: stepUp 1.1s ease-in-out infinite; }
 .walking .upB { animation: stepUp 1.1s ease-in-out infinite; animation-delay: -.55s; }
 @keyframes stepUp { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-3px) scaleY(.97); } 50% { transform: translateY(0); } }

@@ -56,8 +56,12 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 }
 .fig .leg, .fig .arm, .heroine .leg { transform-box: fill-box; transform-origin: 50% 0; }
 .walking .swA { animation: swingA 1.1s ease-in-out infinite alternate; }
+.bowArm { transform-box: view-box; }
 .walking .swB { animation: swingA 1.1s ease-in-out infinite alternate-reverse; }
 @keyframes swingA { from { transform: rotate(-16deg); } to { transform: rotate(16deg); } }
+.walking .fbA { animation: fbSwing 1.1s ease-in-out infinite alternate; }
+.walking .fbB { animation: fbSwing 1.1s ease-in-out infinite alternate-reverse; }
+@keyframes fbSwing { from { transform: translateY(0) scaleY(1); } to { transform: translateY(-1.5px) scaleY(.9); } }
 .walking .upA { animation: stepUp 1.1s ease-in-out infinite; }
 .walking .upB { animation: stepUp 1.1s ease-in-out infinite; animation-delay: -.55s; }
 @keyframes stepUp { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-3px) scaleY(.97); } 50% { transform: translateY(0); } }
@@ -320,7 +324,7 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 .bell-waves { opacity: 0; }
 .f-bell .bell-waves { animation: bellRing 1.6s ease-out 3; }
 @keyframes bellRing { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
-.stu { opacity: 0; transition: opacity .8s; }
+.stu { opacity: 0; transition: opacity .8s; transform-box: fill-box; transform-origin: 50% 100%; }
 .f-out .stu { opacity: 1; animation: stuOut 9s cubic-bezier(.3, .1, .4, 1) var(--dl) forwards; }
 @keyframes stuOut { from { transform: translate(0, -10px) scale(.86); } to { transform: translate(var(--dx), var(--dy)) scale(1.5); } }
 .f-far .stu { animation: stuAway 6s ease-in forwards; opacity: .0; transition: opacity 5s; }
@@ -463,8 +467,11 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 .f-doors .mdoor-l { transform: translateX(-56px); } .f-doors .mdoor-r { transform: translateX(56px); }
 .platform { opacity: .0; transition: opacity 1s; } .f-doors .platform { opacity: 1; }
 .leavers { opacity: 0; transition: opacity 1s; }
-.f-leave .leavers { opacity: 1; animation: leave 5s ease-in forwards; }
-@keyframes leave { to { transform: translate(-30px, -150px) scale(.7); } }
+.f-leave .leavers { opacity: 1; }
+/* 以脚底为基准缩放：人向车门走去、逐渐变小，最后没入站台的光里 */
+.leaver { transform-box: fill-box; transform-origin: 50% 100%; }
+.f-leave .leaver { animation: leave 5.5s ease-in forwards; animation-delay: var(--ld, 0s); }
+@keyframes leave { 0% { transform: none; opacity: 1; } 80% { opacity: 1; } 100% { transform: translate(var(--lx), var(--ly)) scale(.5); opacity: 0; } }
 .arrive-sign { opacity: .6; } .f-slow .arrive-sign { animation: blink 1s ease-in-out infinite; }
 
 /* 音乐会 */
@@ -474,7 +481,10 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 .stage-wash { transition: opacity 1.4s; } .f-dim .stage-wash { opacity: .3; } .f-spot .stage-wash { opacity: 1.6; }
 .players { transition: filter 1.4s; filter: brightness(.6); } .f-spot .players { filter: brightness(1.15); }
 .bow { transform-box: fill-box; transform-origin: 0 50%; }
-.f-play .bow { animation: bowing 1.4s ease-in-out infinite alternate; animation-delay: inherit; }
+.f-play .bowArm { animation: bowStroke 1.3s ease-in-out infinite alternate; animation-delay: var(--d); }
+.f-play .bowArm.h { animation-name: bowStrokeH; }
+@keyframes bowStroke { from { transform: translate(-3px, -4px); } to { transform: translate(4px, 5px); } }
+@keyframes bowStrokeH { from { transform: translateX(-6px); } to { transform: translateX(6px); } }
 .f-play .player { animation: sway 2.8s ease-in-out infinite alternate; animation-delay: var(--d); }
 @keyframes bowing { from { transform: translateX(-6px); } to { transform: translateX(6px); } }
 @keyframes sway { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
@@ -643,8 +653,13 @@ window.HEROINE_SRC="data:image/webp;base64,UklGRvqaAABXRUJQVlA4WAoAAAAQAAAArQEAg
       if (o.bag === 'backpack') g += `<path d="M-22 -146Q-30 -140 -29 -108L-27 -96L-12 -98L-12 -146Z" fill="${o.bagColor || '#8a4f45'}"/>`;
       g += `<path d="M-12 -150Q2 -156 14 -149L19 ${hem}Q0 ${hem + 5} -16 ${hem}Z" fill="${coat}"/>`;
       g += `<path d="M2 -146Q-2 -120 2 -96" stroke="${coat2}" stroke-width="1.4" fill="none" opacity=".7"/>`;
-      g += `<g class="${o.arm === 'push' ? '' : walk ? 'arm swB' : ''}"><path d="M-3 -146Q-8 -128 -6 -102L1 -100L5 -128Z" fill="${coat2}"/><circle cx="-2" cy="-98" r="4" fill="${SKIN}"/></g>`;
-      if (o.arm === 'push') g += `<path d="M2 -144Q10 -124 26 -112L28 -105L21 -104Q6 -116 -2 -134Z" fill="${coat2}"/><circle cx="28" cy="-107" r="4" fill="${SKIN}"/>`;
+      if (o.arm === 'push') {
+        // 双手向前（推车 / 弹琴 / 做饭）：远侧手臂在身体后面，近侧在前
+        g = `<path d="M-2 -144Q8 -122 22 -110" stroke="${shade(coat2, -14)}" stroke-width="8" stroke-linecap="round" fill="none"/><circle cx="24" cy="-109" r="3.8" fill="${SKIN_D}"/>` + g;
+        g += `<path d="M2 -144Q12 -122 28 -108" stroke="${coat2}" stroke-width="8.5" stroke-linecap="round" fill="none"/><circle cx="30" cy="-107" r="4" fill="${SKIN}"/>`;
+      } else {
+        g += `<g class="${walk ? 'arm swB' : ''}"><path d="M1 -145Q-3 -122 -1 -100" stroke="${coat2}" stroke-width="8.5" stroke-linecap="round" fill="none"/><circle cx="-1" cy="-96" r="4" fill="${SKIN}"/></g>`;
+      }
       if (o.scarf) g += `<path d="M-6 -152Q4 -146 14 -152L14 -144Q4 -139 -6 -145Z" fill="${o.scarf}"/><path d="M-8 -150Q-20 -142 -28 -130Q-18 -134 -6 -144Z" fill="${shade(o.scarf, -12)}" class="scarfTail"/>`;
       g += `<rect x="-1" y="-160" width="8" height="12" fill="${SKIN_D}"/>`;
       g += `<g class="${o.talk ? 'head talk' : 'head'}"><ellipse cx="3" cy="-172" rx="11.5" ry="14" fill="${SKIN}"/><path d="${hairPath(o.hs || 'short', 'side')}" fill="${hair}"/></g>`;
@@ -653,15 +668,25 @@ window.HEROINE_SRC="data:image/webp;base64,UklGRvqaAABXRUJQVlA4WAoAAAAQAAAArQEAg
       g += `<path d="M-20 -150Q0 -157 20 -150L27 ${hem}Q0 ${hem + 6} -27 ${hem}Z" fill="${coat}"/>`;
       if (view === 'front') g += `<path d="M0 -150L0 ${hem + 4}" stroke="${coat2}" stroke-width="1.6" opacity=".8"/><path d="M-9 -152L0 -132L9 -152" fill="${o.inner || shade(coat, 30)}"/>`;
       else g += `<path d="M0 -146L0 ${hem + 3}" stroke="${coat2}" stroke-width="1.2" opacity=".55"/>`;
-      // 手臂
-      const armL = `<path d="M-20 -149Q-30 -138 -30 -108L-27 -86L-20 -88L-18 -120Z" fill="${coat2}"/><circle cx="-24" cy="-83" r="4.3" fill="${SKIN}"/>`;
-      const armR = `<path d="M20 -149Q30 -138 30 -108L27 -86L20 -88L18 -120Z" fill="${coat2}"/><circle cx="24" cy="-83" r="4.3" fill="${SKIN}"/>`;
+      // 手臂：用描边绘制“肩—肘—手”，正背面行走时手臂是前后摆（画面上表现为轻微缩短），不是左右甩
+      const arm = (pts, cls, col, extra) => `<g class="${cls || ''}"><path d="M${pts[0]} ${pts[1]}Q${pts[2]} ${pts[3]} ${pts[4]} ${pts[5]}" stroke="${col || coat2}" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="${pts[4]}" cy="${pts[5] + 3}" r="4.3" fill="${SKIN}"/>${extra || ''}</g>`;
+      const L = [-19, -146, -27, -118, -24, -88], R = [19, -146, 27, -118, 24, -88];
       if (o.arm === 'up') {
-        g += `<g>${armL}</g><g class="arm wave"><path d="M20 -149Q34 -158 40 -178L33 -182Q26 -166 16 -158Z" fill="${coat2}"/><circle cx="37" cy="-184" r="4.3" fill="${SKIN}"/></g>`;
+        g += arm(L) + arm([19, -146, 34, -164, 36, -192]);
       } else if (o.arm === 'table') {
-        g += `<path d="M-20 -149Q-30 -132 -22 -112L-6 -104L-6 -112L-16 -122Z" fill="${coat2}"/><path d="M20 -149Q30 -132 22 -112L6 -104L6 -112L16 -122Z" fill="${coat2}"/><circle cx="-5" cy="-107" r="4" fill="${SKIN}"/><circle cx="5" cy="-107" r="4" fill="${SKIN}"/>`;
+        g += arm([-19, -146, -26, -118, -8, -108]) + arm([19, -146, 26, -118, 8, -108]);
+      } else if (o.arm === 'violin') {
+        // 小提琴架在左肩，左手托琴颈，右手持弓在琴身上来回拉
+        g += `<g transform="rotate(-28 -20 -146)"><ellipse cx="-20" cy="-146" rx="11" ry="6.5" fill="#9a5230"/><path d="M-31 -146H-58" stroke="#3a2416" stroke-width="2.4"/><circle cx="-59" cy="-146" r="2.4" fill="#3a2416"/></g>`;
+        g += arm([-19, -146, -36, -120, -48, -132]);
+        g += `<g class="bowArm">${arm([19, -146, 32, -124, 4, -124], '', null, '<path d="M4 -122L-34 -172" stroke="#efe4cc" stroke-width="1.6"/>')}</g>`;
+      } else if (o.arm === 'cello') {
+        // 大提琴立在两膝之间，左手按琴颈，右手横向运弓
+        g += `<path d="M-2 -76L-8 -136" stroke="#3a2416" stroke-width="3"/><ellipse cx="0" cy="-52" rx="15" ry="25" fill="#8a4a2a"/><path d="M-6 -64h12M-6 -40h12" stroke="#5a2c18" stroke-width="1.4"/><path d="M0 -26V-2" stroke="#3a2416" stroke-width="2"/>`;
+        g += arm([-19, -146, -32, -126, -9, -116]);
+        g += `<g class="bowArm h">${arm([19, -146, 34, -104, 20, -70], '', null, '<path d="M22 -68L-30 -58" stroke="#efe4cc" stroke-width="1.6"/>')}</g>`;
       } else {
-        g += `<g class="${walk ? 'arm swA' : ''}">${armL}</g><g class="${walk ? 'arm swB' : ''}">${armR}</g>`;
+        g += arm(L, walk ? 'arm fbA' : '') + arm(R, walk ? 'arm fbB' : '');
       }
       if (o.bag === 'backpack' && view === 'back') g += `<path d="M-16 -146Q0 -150 16 -146L15 -100Q0 -96 -15 -100Z" fill="${o.bagColor || '#8a4f45'}"/><path d="M-13 -118L13 -118" stroke="#00000033"/>`;
       if (o.bag === 'backpack' && view === 'front') g += `<path d="M-17 -150L-14 -118M17 -150L14 -118" stroke="${o.bagColor || '#8a4f45'}" stroke-width="3.5"/>`;
@@ -1440,9 +1465,9 @@ window.STORY = {
         <path d="M250 260h100v-20q-10 -14 -50 -14t-50 14z" fill="#8f8a84"/>
         <g class="steam idle"><path class="wisp" d="M282 224q-10 -20 4 -40t-2 -40" stroke="#fff7ea" stroke-width="10"/><path class="wisp" d="M312 222q12 -22 -2 -44t6 -40" stroke="#fff7ea" stroke-width="10"/></g>
         <path d="M0 370H400V780H0Z" fill="#4a3428"/>
-        <path d="M20 340H170V362H20Z" fill="#8a6a4a"/><path d="M28 362V420M162 362V420" stroke="#6a4f36" stroke-width="5"/>
-        ${student({ x: 50, y: 352, s: .62, view: 'side', half: true, talk: true }, 1)}${student({ x: 96, y: 348, s: .64, view: 'front', half: true, talk: true, delay: -1 }, 2)}${student({ x: 144, y: 352, s: .62, view: 'side', half: true, flip: true, nod: true }, 4)}
-        <ellipse cx="70" cy="340" rx="12" ry="4" fill="#eee2cc"/><ellipse cx="124" cy="340" rx="12" ry="4" fill="#eee2cc"/>
+        ${student({ x: 46, y: 400, s: .6, view: 'front', sit: true, arm: 'table', talk: true }, 1)}${student({ x: 96, y: 396, s: .6, view: 'front', sit: true, arm: 'table', talk: true, delay: -1 }, 2)}${student({ x: 146, y: 400, s: .6, view: 'front', sit: true, arm: 'table', nod: true }, 4)}
+        ${[46, 96, 146].map(x => `<path d="M${x - 13} 372h26v4h-26zM${x - 10} 376v24M${x + 10} 376v24" stroke="#5a4030" stroke-width="2.5" fill="#6d4f38"/>`).join('')}<path d="M14 352H178V370H14Z" fill="#8a6a4a"/><path d="M22 370V420M170 370V420" stroke="#6a4f36" stroke-width="5"/>
+        <ellipse cx="70" cy="352" rx="12" ry="4" fill="#eee2cc"/><ellipse cx="124" cy="352" rx="12" ry="4" fill="#eee2cc"/>
         <path d="M-10 470Q200 440 410 470L420 780H-20Z" fill="#9a6e4c"/><path d="M-10 470Q200 440 410 470" stroke="#c89a6c" stroke-width="3" fill="none"/>
         <g class="bowl-g" data-hit="bowl">
           <ellipse cx="200" cy="476" rx="98" ry="22" fill="#00000033"/>
@@ -1753,7 +1778,7 @@ window.STORY = {
         ${person({ x: 66, y: 556, s: .74, view: 'front', sit: true, nod: true }, 1)}${person({ x: 176, y: 556, s: .76, view: 'front', sit: true, hs: 'short', glasses: true }, 4)}
         <path d="M0 560H400V780H0Z" fill="url(#mFloor)"/>
         <rect x="240" y="120" width="8" height="660" fill="#c7ccd4"/><rect x="241" y="120" width="2" height="660" fill="#fff" opacity=".6"/>
-        <g class="leavers">${person({ x: 330, y: 700, s: 1.2, view: 'back', walk: true }, 2)}${person({ x: 380, y: 720, s: 1.24, view: 'back', walk: true, delay: -.5 }, 3)}</g>
+        <g class="leavers"><g class="leaver" style="--lx:-12px;--ly:-104px">${person({ x: 330, y: 700, s: 1.2, view: 'back', walk: true }, 2)}</g><g class="leaver" style="--lx:-44px;--ly:-118px;--ld:.6s">${person({ x: 378, y: 720, s: 1.24, view: 'back', walk: true, delay: -.5 }, 3)}</g></g>
         <g class="arrive-sign"><rect x="60" y="96" width="120" height="22" rx="4" fill="#1a2234"/><text x="120" y="112" text-anchor="middle" font-size="11" fill="#ffd79a" font-family="sans-serif" letter-spacing="2">下一站 · 江湾路</text></g>`);
       const screen = `<div class="chat"><div class="chat-top">家</div><div class="bub in msg-b">今天忙不忙？记得好好吃饭。</div><div class="bub me reply-b">挺好的，不用担心。</div>
         <div class="chat-input"><span class="typed">挺好的，不用担心。</span><button class="send" data-hit="reply" aria-label="回复">回复</button></div><div class="lock">23:41<small>家：今天忙不忙？…</small></div></div>`;
@@ -1793,8 +1818,8 @@ window.STORY = {
         <g class="stage-wash"><path d="M60 330H340L370 450H30Z" fill="#ffd9a0" opacity=".14"/></g>
         <g class="spots"><path d="M150 0L90 450H230L180 0Z" fill="url(#spot)"/><path d="M250 0L190 450H320L270 0Z" fill="url(#spot)"/></g>
         <g class="players">
-          <g transform="translate(92 412)"><path d="M0 0V-34H70V-28L60 -26V0Z" fill="#141016"/><path d="M0 -34Q20 -60 60 -40L70 -34Z" fill="#1b1520"/>${F.fig({ x: 84, y: 0, s: .32, view: 'side', flip: true, hs: 'short', coat: '#1b1b22', pants: '#141418', half: true, nod: true })}</g>
-          ${['vln1', 'vln2', 'vla', 'vc'].map((k, i) => `<g transform="translate(${190 + i * 38} ${414})"><g class="player" style="--d:-${i * .4}s">${F.fig({ x: 0, y: 0, s: .34, view: 'front', hs: i % 2 ? 'long' : 'short', coat: '#1d1a22', pants: '#141418', half: true })}${k === 'vc' ? '<ellipse cx="10" cy="-30" rx="9" ry="16" fill="#8a4a2a"/><path d="M10 -46V-14" stroke="#2a1a12" stroke-width="1"/>' : '<ellipse cx="-7" cy="-56" rx="7" ry="4" fill="#8a4a2a" transform="rotate(-24 -7 -56)"/>'}<path class="bow" d="${k === 'vc' ? 'M-6 -32L28 -26' : 'M-12 -60L14 -44'}" stroke="#e9dcc0" stroke-width="1.4"/></g></g>`).join('')}
+          <g transform="translate(92 412)"><path d="M0 0V-34H70V-28L60 -26V0Z" fill="#141016"/><path d="M0 -34Q20 -60 60 -40L70 -34Z" fill="#1b1520"/>${F.fig({ x: 86, y: 0, s: .34, view: 'side', flip: true, hs: 'short', coat: '#1b1b22', coat2: '#141218', pants: '#141418', half: true, nod: true, arm: 'push' })}</g>
+          ${['violin', 'violin', 'violin', 'cello'].map((k, i) => `<g class="player" style="--d:-${(i * .37).toFixed(2)}s"><path d="M${186 + i * 40} 442v-26h18v26" stroke="#2a1a14" stroke-width="2" fill="none"/>${F.fig({ x: 195 + i * 40, y: 444, s: .4, view: 'front', sit: true, arm: k, hs: i % 2 ? 'long' : 'short', hair: '#15151a', coat: '#1d1a22', coat2: '#151219', pants: '#141418' })}</g>`).join('')}
         </g>
         <path d="M0 470H400V780H0Z" fill="#1e1418"/>
         <path d="M0 500Q200 486 400 500V520Q200 506 0 520Z" fill="#7a4a32"/><path d="M0 500Q200 486 400 500" stroke="#d9b06a" stroke-width="2" fill="none"/>
@@ -1867,7 +1892,7 @@ window.STORY = {
      ========================================================= */
   SCENES.friends = {
     build() {
-      const friend = (o, i) => F.fig(Object.assign({ half: true, talk: true }, o), i);
+      const friend = (o, i) => F.fig(Object.assign({ talk: true }, o), i);
       const table = U.svg(`<defs>${U.lg('fw', [[0, '#3a2a30'], [1, '#5a3c34']])}${U.rg('fl', [[0, '#ffd9a0', .7], [1, '#ffd9a0', 0]])}${U.rg('neon', [[0, '#ff9a8a', .7], [1, '#ff9a8a', 0]])}</defs>
         <rect width="400" height="780" fill="url(#fw)"/>
         <circle cx="290" cy="170" r="110" fill="url(#neon)"/>
@@ -1876,9 +1901,10 @@ window.STORY = {
         <path d="M0 60Q100 90 200 70T400 80" stroke="#6a5040" stroke-width="1.5" fill="none"/>${Array.from({ length: 12 }, (_, i) => `<circle class="twinkle" style="--d:-${i * .3}s" cx="${10 + i * 34}" cy="${68 + Math.sin(i * 1.3) * 8}" r="4" fill="#ffd38a"/>`).join('')}
         <circle cx="200" cy="420" r="200" fill="url(#fl)"/>
         <path d="M0 300H400V780H0Z" fill="#2c1e1e" opacity=".55"/>
-        ${friend({ x: 200, y: 420, s: 1.02, view: 'front', hs: 'short', coat: '#5f6f5a', arm: 'table', delay: -.6 }, 0)}
-        ${friend({ x: 84, y: 450, s: 1.08, view: 'side', hs: 'pony', coat: '#8a5a4a', hair: '#3a2a24' }, 1)}
-        ${friend({ x: 318, y: 452, s: 1.08, view: 'side', flip: true, hs: 'long', coat: '#4a5a7a', delay: -1.2 }, 2)}
+        <path d="M30 360h76v80h-76zM294 360h76v80h-76z" fill="#4a2e26"/><path d="M164 330h72v80h-72z" fill="#43291f"/>
+        ${friend({ x: 200, y: 476, s: .96, view: 'front', sit: true, hs: 'short', coat: '#5f6f5a', arm: 'table', delay: -.6 }, 0)}
+        ${friend({ x: 68, y: 500, s: 1.08, view: 'front', sit: true, hs: 'pony', coat: '#8a5a4a', hair: '#3a2a24', arm: 'table' }, 1)}
+        ${friend({ x: 332, y: 500, s: 1.08, view: 'front', sit: true, hs: 'long', coat: '#4a5a7a', arm: 'table', delay: -1.2 }, 2)}
         <ellipse cx="200" cy="470" rx="190" ry="54" fill="#8a5a3a"/><ellipse cx="200" cy="462" rx="182" ry="48" fill="#a06a44"/>
         <ellipse cx="140" cy="456" rx="34" ry="10" fill="#efe6d6"/>${[0, 1, 2, 3, 4].map(i => `<path d="M${118 + i * 10} 452l14 -18" stroke="#b9875a" stroke-width="2.4"/><circle cx="${126 + i * 10}" cy="${444 - i}" r="3" fill="#8a3a2a"/>`).join('')}
         <ellipse cx="250" cy="452" rx="30" ry="10" fill="#efe6d6"/><ellipse cx="250" cy="448" rx="22" ry="6" fill="#d98a4a"/>

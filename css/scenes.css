@@ -70,7 +70,7 @@
 .bell-waves { opacity: 0; }
 .f-bell .bell-waves { animation: bellRing 1.6s ease-out 3; }
 @keyframes bellRing { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
-.stu { opacity: 0; transition: opacity .8s; }
+.stu { opacity: 0; transition: opacity .8s; transform-box: fill-box; transform-origin: 50% 100%; }
 .f-out .stu { opacity: 1; animation: stuOut 9s cubic-bezier(.3, .1, .4, 1) var(--dl) forwards; }
 @keyframes stuOut { from { transform: translate(0, -10px) scale(.86); } to { transform: translate(var(--dx), var(--dy)) scale(1.5); } }
 .f-far .stu { animation: stuAway 6s ease-in forwards; opacity: .0; transition: opacity 5s; }
@@ -213,8 +213,11 @@
 .f-doors .mdoor-l { transform: translateX(-56px); } .f-doors .mdoor-r { transform: translateX(56px); }
 .platform { opacity: .0; transition: opacity 1s; } .f-doors .platform { opacity: 1; }
 .leavers { opacity: 0; transition: opacity 1s; }
-.f-leave .leavers { opacity: 1; animation: leave 5s ease-in forwards; }
-@keyframes leave { to { transform: translate(-30px, -150px) scale(.7); } }
+.f-leave .leavers { opacity: 1; }
+/* 以脚底为基准缩放：人向车门走去、逐渐变小，最后没入站台的光里 */
+.leaver { transform-box: fill-box; transform-origin: 50% 100%; }
+.f-leave .leaver { animation: leave 5.5s ease-in forwards; animation-delay: var(--ld, 0s); }
+@keyframes leave { 0% { transform: none; opacity: 1; } 80% { opacity: 1; } 100% { transform: translate(var(--lx), var(--ly)) scale(.5); opacity: 0; } }
 .arrive-sign { opacity: .6; } .f-slow .arrive-sign { animation: blink 1s ease-in-out infinite; }
 
 /* 音乐会 */
@@ -224,7 +227,10 @@
 .stage-wash { transition: opacity 1.4s; } .f-dim .stage-wash { opacity: .3; } .f-spot .stage-wash { opacity: 1.6; }
 .players { transition: filter 1.4s; filter: brightness(.6); } .f-spot .players { filter: brightness(1.15); }
 .bow { transform-box: fill-box; transform-origin: 0 50%; }
-.f-play .bow { animation: bowing 1.4s ease-in-out infinite alternate; animation-delay: inherit; }
+.f-play .bowArm { animation: bowStroke 1.3s ease-in-out infinite alternate; animation-delay: var(--d); }
+.f-play .bowArm.h { animation-name: bowStrokeH; }
+@keyframes bowStroke { from { transform: translate(-3px, -4px); } to { transform: translate(4px, 5px); } }
+@keyframes bowStrokeH { from { transform: translateX(-6px); } to { transform: translateX(6px); } }
 .f-play .player { animation: sway 2.8s ease-in-out infinite alternate; animation-delay: var(--d); }
 @keyframes bowing { from { transform: translateX(-6px); } to { transform: translateX(6px); } }
 @keyframes sway { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
