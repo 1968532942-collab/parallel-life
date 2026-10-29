@@ -658,6 +658,17 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 /* 结局：插画的人物在画面中部，结局面板只占下半部分 */
 .act.ending .frame { filter: none; }
 
+/* 地铁（新插画）：窗外光带流动 + 点击车窗后倒影被轻轻照亮 */
+.win-streaks { position: absolute; left: 0; top: 14%; width: 86%; height: 25%; overflow: hidden; mix-blend-mode: screen; pointer-events: none; border-radius: 0 2% 2% 0; }
+.win-streaks .mv { position: absolute; left: 0; display: flex; width: max-content; }
+.win-streaks .mv.far { top: 66%; height: 10%; animation: mvStreak 7s linear infinite; }
+.win-streaks .mv.far i { display: block; width: 900px; height: 100%; background: repeating-linear-gradient(90deg, transparent 0 60px, #ffcf8f55 60px 140px, transparent 140px 260px, #ff9a7a44 260px 300px, transparent 300px 450px); filter: blur(2px); }
+@keyframes mvStreak { to { transform: translateX(-900px); } }
+.win-streaks .mv.near { top: 0; height: 100%; animation: mvNear 1.1s linear infinite; }
+.win-streaks .mv.near i { display: block; width: 140px; height: 100%; background: linear-gradient(90deg, transparent 0 86%, #ffffff10 86% 90%, transparent 90%); }
+.reflect-glow { position: absolute; left: 60%; top: 23%; width: 22%; height: 16%; border-radius: 50%; background: radial-gradient(ellipse, #fff4dc66, transparent 70%); mix-blend-mode: screen; opacity: 0; transition: opacity 2.2s; pointer-events: none; }
+.f-reflect .reflect-glow { opacity: 1; }
+
 </style>
 </head>
 <body>
@@ -1371,7 +1382,7 @@ window.STORY = {
         { id: 'c2', no: '第二幕', title: '陌生城市的末班地铁', scene: 'metro', beats: [
           { cam: [50, 50, 1], lines: ['刚来到这座城市的时候，我常常很晚才回家。', '有时候是加班，有时候只是想一个人在街上多走一会儿。'] },
           { lines: ['末班地铁里很安静。'],
-            act: { type: 'tap', hit: 'window', hint: '点击车窗', add: ['reflect'], cam: [42, 40, 1.14], camT: 2.6, wait: 2200, sfx: 'chime' } },
+            act: { type: 'tap', hit: 'window', hint: '点击车窗', add: ['reflect'], cam: [71, 32, 1.45], camT: 2.6, wait: 2200, sfx: 'chime' } },
           { lines: ['车窗上映出我的脸，外面是一栋接一栋掠过去的高楼和灯光。'] },
           { cam: [50, 50, 1.02], camT: 2, sfx: 'arrive', lines: ['我坐在角落里，听着列车到站的提示音，忽然有一点想家。'],
             act: { type: 'tap', hit: 'myphone', hint: '点击手机', add: ['phone', 'msg'], wait: 1500, sfx: 'msg' } },
@@ -2373,10 +2384,11 @@ window.STORY = {
   /* ---------------- 远方二：末班地铁 ---------------- */
   SCENES.metro = {
     build() {
-      const city = `<div class="metro-out"><div class="mv far"><img src="${A}c2_city.webp" alt=""><img src="${A}c2_city.webp" class="flip" alt=""><img src="${A}c2_city.webp" alt=""><img src="${A}c2_city.webp" class="flip" alt=""></div><div class="mv near">${Array.from({ length: 12 }, () => '<i></i>').join('')}</div></div>`;
-      const art = frame('c2_carriage', `<img class="reflection" src="${A}heroine.webp" alt="">` + hit('window', 2, 16, 28, 26) + '<div class="door-glow"></div>' + `<div class="leavers">${layer('c2_leavers', 'walker')}</div>`, { cls: 'carriage' });
+      // 车窗外夜景和倒影都已画在插画里；叠一层向左流动的光带，表现列车向右行驶
+      const streaks = `<div class="win-streaks"><div class="mv far">${Array.from({ length: 2 }, () => '<i></i>').join('')}</div><div class="mv near">${Array.from({ length: 12 }, () => '<i></i>').join('')}</div></div>`;
+      const art = frame('c2_carriage', streaks + '<div class="reflect-glow"></div>' + hit('window', 2, 14, 84, 25) + '<div class="door-glow"></div>' + `<div class="leavers">${layer('c2_leavers', 'walker')}</div>`, { cls: 'carriage' });
       const screen = `<div class="chat"><div class="chat-top">家</div><div class="bub in msg-b">今天忙不忙？记得好好吃饭。</div><div class="bub me reply-b">挺好的，不用担心。</div><div class="chat-input"><span class="typed">挺好的，不用担心。</span><button class="send" data-hit="reply" aria-label="回复">回复</button></div><div class="lock">23:41<small>家：今天忙不忙？…</small></div></div>`;
-      return { cam: shot('m', city + art), fp: `<div class="fp-phone peek" data-hit="myphone">${FIG.phoneHand(screen)}</div>` };
+      return { cam: shot('m', art), fp: `<div class="fp-phone peek" data-hit="myphone">${FIG.phoneHand(screen)}</div>` };
     },
     flag: SCENES.metro.flag
   };

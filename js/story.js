@@ -100,7 +100,7 @@ window.STORY = {
         { id: 'c2', no: '第二幕', title: '陌生城市的末班地铁', scene: 'metro', beats: [
           { cam: [50, 50, 1], lines: ['刚来到这座城市的时候，我常常很晚才回家。', '有时候是加班，有时候只是想一个人在街上多走一会儿。'] },
           { lines: ['末班地铁里很安静。'],
-            act: { type: 'tap', hit: 'window', hint: '点击车窗', add: ['reflect'], cam: [42, 40, 1.14], camT: 2.6, wait: 2200, sfx: 'chime' } },
+            act: { type: 'tap', hit: 'window', hint: '点击车窗', add: ['reflect'], cam: [71, 32, 1.45], camT: 2.6, wait: 2200, sfx: 'chime' } },
           { lines: ['车窗上映出我的脸，外面是一栋接一栋掠过去的高楼和灯光。'] },
           { cam: [50, 50, 1.02], camT: 2, sfx: 'arrive', lines: ['我坐在角落里，听着列车到站的提示音，忽然有一点想家。'],
             act: { type: 'tap', hit: 'myphone', hint: '点击手机', add: ['phone', 'msg'], wait: 1500, sfx: 'msg' } },

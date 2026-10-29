@@ -136,10 +136,11 @@
   /* ---------------- 远方二：末班地铁 ---------------- */
   SCENES.metro = {
     build() {
-      const city = `<div class="metro-out"><div class="mv far"><img src="${A}c2_city.webp" alt=""><img src="${A}c2_city.webp" class="flip" alt=""><img src="${A}c2_city.webp" alt=""><img src="${A}c2_city.webp" class="flip" alt=""></div><div class="mv near">${Array.from({ length: 12 }, () => '<i></i>').join('')}</div></div>`;
-      const art = frame('c2_carriage', `<img class="reflection" src="${A}heroine.webp" alt="">` + hit('window', 2, 16, 28, 26) + '<div class="door-glow"></div>' + `<div class="leavers">${layer('c2_leavers', 'walker')}</div>`, { cls: 'carriage' });
+      // 车窗外夜景和倒影都已画在插画里；叠一层向左流动的光带，表现列车向右行驶
+      const streaks = `<div class="win-streaks"><div class="mv far">${Array.from({ length: 2 }, () => '<i></i>').join('')}</div><div class="mv near">${Array.from({ length: 12 }, () => '<i></i>').join('')}</div></div>`;
+      const art = frame('c2_carriage', streaks + '<div class="reflect-glow"></div>' + hit('window', 2, 14, 84, 25) + '<div class="door-glow"></div>' + `<div class="leavers">${layer('c2_leavers', 'walker')}</div>`, { cls: 'carriage' });
       const screen = `<div class="chat"><div class="chat-top">家</div><div class="bub in msg-b">今天忙不忙？记得好好吃饭。</div><div class="bub me reply-b">挺好的，不用担心。</div><div class="chat-input"><span class="typed">挺好的，不用担心。</span><button class="send" data-hit="reply" aria-label="回复">回复</button></div><div class="lock">23:41<small>家：今天忙不忙？…</small></div></div>`;
-      return { cam: shot('m', city + art), fp: `<div class="fp-phone peek" data-hit="myphone">${FIG.phoneHand(screen)}</div>` };
+      return { cam: shot('m', art), fp: `<div class="fp-phone peek" data-hit="myphone">${FIG.phoneHand(screen)}</div>` };
     },
     flag: SCENES.metro.flag
   };
