@@ -1,0 +1,259 @@
+/* =========================================================
+   scenes.css — 各场景专属动画与状态（由 .f-xxx 状态标记驱动）
+   ========================================================= */
+
+/* ---------- 飘落物 ---------- */
+.fall i.osm { width: 4px; height: 4px; border-radius: 50%; background: #f6c766; box-shadow: 3px 0 0 .3px #f0b95a, -3px 0 0 .3px #f0b95a, 0 3px 0 .3px #f4c868, 0 -3px 0 .3px #f4c868, 0 0 8px #ffd98c99; transform-origin: center; }
+.fall i.petal { width: var(--s); height: calc(var(--s) * .72); border-radius: 70% 0 70% 0; background: linear-gradient(135deg, #fbe9e6, #eec4c6); box-shadow: 0 1px 3px #b0808033; }
+.fall i.leaf { width: var(--s); height: calc(var(--s) * .55); border-radius: 0 80% 0 80%; background: linear-gradient(135deg, #8f9c62, #5f6f45); }
+.fall i.snow { width: var(--s); height: var(--s); border-radius: 50%; background: #f4f6fa; filter: blur(.6px); opacity: .8; }
+.fall i.glow { width: var(--s); height: var(--s); border-radius: 50%; background: #ffe7b8; box-shadow: 0 0 10px #ffd38a; }
+.fall.windy { opacity: 0; transition: opacity 1.5s; }
+.f-wind .fall.windy { opacity: 1; }
+
+/* ---------- 标题页 ---------- */
+.title-hero { position: absolute; left: 50%; bottom: 33%; height: 41%; transform: translateX(-50%); filter: drop-shadow(0 18px 18px #0009) brightness(.92); animation: heroBreath 6s ease-in-out infinite alternate; }
+@keyframes heroBreath { to { transform: translateX(-50%) translateY(-4px); } }
+
+/* ---------- 序章：信封 ---------- */
+.envelope { position: absolute; left: 50%; top: 40%; width: 168px; height: 112px; margin: -56px 0 0 -84px; animation: envFloat 4.5s ease-in-out infinite; transition: opacity 1s .9s, transform 1s; filter: drop-shadow(0 18px 22px #000a); }
+@keyframes envFloat { 50% { transform: translateY(-10px) rotate(-2deg); } }
+.envelope::after { content: ""; position: absolute; inset: -40px; border-radius: 50%; background: radial-gradient(circle, #f3cf8f55, transparent 65%); z-index: -1; transform: scale(calc(1 + var(--hold, 0) * .6)); }
+.env-back, .env-front, .env-flap, .env-paper { position: absolute; inset: 0; }
+.env-back { background: #c7ad86; border-radius: 3px; }
+.env-paper { left: 10px; right: 10px; top: 8px; bottom: 6px; background: #fbf3e2; transition: transform 1s .3s var(--ease); }
+.env-front { background: linear-gradient(160deg, #ecdcbc, #cdb38a); clip-path: polygon(0 26%, 50% 60%, 100% 26%, 100% 100%, 0 100%); border-radius: 3px; }
+.env-flap { background: linear-gradient(180deg, #e3cfa6, #cbb088); clip-path: polygon(0 0, 100% 0, 50% 62%); transform-origin: 50% 0; transition: transform .8s var(--ease); z-index: 2; }
+.env-seal { position: absolute; left: 50%; top: 56%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #b4544c, #7f2f2b); color: #f6d4a8; display: grid; place-items: center; font-size: 15px; z-index: 3; box-shadow: 0 2px 6px #0006; transition: opacity .4s; }
+.f-open .envelope { animation: none; }
+.f-open .env-seal { opacity: 0; }
+.f-open .env-flap { transform: rotateX(180deg); z-index: 0; }
+.f-open .env-paper { transform: translateY(-60px); }
+.f-open .envelope { opacity: 0; transform: translateY(40px) scale(.9); }
+.letter { position: absolute; left: 50%; top: calc(var(--st, 0px) + 13%); width: min(82%, 330px); transform: translate(-50%, 30px) scale(.94); opacity: 0; padding: 26px 24px 22px; background: linear-gradient(170deg, #f8efdc, #efe0c2 60%, #e7d4b0); color: #3b3530; box-shadow: 0 24px 70px #000b; transition: opacity 1.1s 1s, transform 1.4s 1s var(--ease); border-radius: 2px; }
+.letter::after { content: ""; position: absolute; inset: 9px; border: 1px solid #8a6c4630; pointer-events: none; }
+.f-open .letter { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.lt-to { font-family: Georgia, var(--serif); font-size: 10px; letter-spacing: .26em; color: #94704a; margin-bottom: 14px; }
+.letter .ln { font-family: var(--serif); font-size: clamp(15px, 4.2vw, 17px); line-height: 1.85; margin: 0 0 6px; letter-spacing: .05em; opacity: 0; transform: translateY(6px); transition: opacity 1s, transform 1s; }
+.f-l1 .ln1, .f-l2 .ln2, .f-l3 .ln3, .f-l4 .ln4, .f-l5 .ln5 { opacity: 1; transform: none; }
+.letter .ln5 { color: #8a5a2c; }
+.lt-sign { text-align: right; font-size: 12px; color: #8d7458; margin-top: 10px; opacity: 0; transition: opacity 1s .6s; }
+.f-l5 .lt-sign { opacity: 1; }
+.road-label { position: absolute; top: 39%; font-family: var(--serif); font-size: 13px; letter-spacing: .4em; color: #fff3dc; text-shadow: 0 1px 10px #000; opacity: 0; transition: opacity 1.4s 1.5s, transform 1s; }
+.road-label.l { left: 17%; } .road-label.r { right: 15%; }
+.f-fork .road-label { opacity: 1; }
+.pick-home .road-label.l, .pick-far .road-label.r { transform: scale(1.3); color: #ffd99a; }
+.shot-road .laneL, .shot-road .laneR { animation: lane 3s linear infinite; }
+@keyframes lane { to { stroke-dashoffset: -28; } }
+.pick-home .glowL, .pick-far .glowR { transition: transform 1.3s; transform: scale(1.5); transform-box: fill-box; transform-origin: center; }
+
+/* ---------- 第一幕 桂花：接花 ---------- */
+.palm { position: absolute; left: 50%; bottom: -4%; width: min(72%, 330px); transform: translate(-50%, 105%); transition: transform 1.8s cubic-bezier(.2, .8, .25, 1), width 3s var(--ease); filter: drop-shadow(0 -6px 20px #0005); }
+.palm svg { display: block; width: 100%; height: auto; }
+.f-catch .palm { transform: translate(-50%, 0); }
+.f-close .palm { transform: translate(-50%, -4%) scale(1.14); transform-origin: 50% 100%; }
+.caught { position: absolute; left: 52%; top: 26%; width: 6px; height: 6px; border-radius: 50%; background: #f6c766; box-shadow: 4px 0 0 .5px #f0b95a, -4px 0 0 .5px #f0b95a, 0 4px 0 .5px #f4c868, 0 -4px 0 .5px #f4c868, 0 0 14px 4px #ffd98c99; opacity: 0; transform: translate(-50%, -60vh) scale(1.6); }
+.f-catch .caught { animation: catchFall 3s cubic-bezier(.35, .1, .3, 1) 1.1s forwards; }
+@keyframes catchFall {
+  0% { opacity: 0; transform: translate(-50%, -62vh) rotate(0) scale(1.6); } 10% { opacity: 1; }
+  35% { transform: translate(calc(-50% + 30px), -40vh) rotate(120deg) scale(1.6); }
+  70% { transform: translate(calc(-50% - 20px), -14vh) rotate(240deg) scale(1.6); }
+  100% { opacity: 1; transform: translate(-50%, 0) rotate(330deg) scale(1.6); }
+}
+.f-close .caught { box-shadow: 4px 0 0 .5px #f0b95a, -4px 0 0 .5px #f0b95a, 0 4px 0 .5px #f4c868, 0 -4px 0 .5px #f4c868, 0 0 26px 10px #ffd98caa; }
+.f-blur .cam { filter: blur(4px) brightness(.88) saturate(.9); }
+.f-close .cam { filter: blur(7px) brightness(.8); }
+
+/* ---------- 第二幕 晚风与校门 ---------- */
+.walk-bg { transform-box: view-box; transform-origin: 50% 56%; animation: walkForward 22s ease-in-out infinite alternate; }
+@keyframes walkForward { to { transform: scale(1.09); } }
+.bell-waves { opacity: 0; }
+.f-bell .bell-waves { animation: bellRing 1.6s ease-out 3; }
+@keyframes bellRing { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+.stu { opacity: 0; transition: opacity .8s; }
+.f-out .stu { opacity: 1; animation: stuOut 9s cubic-bezier(.3, .1, .4, 1) var(--dl) forwards; }
+@keyframes stuOut { from { transform: translate(0, -10px) scale(.86); } to { transform: translate(var(--dx), var(--dy)) scale(1.5); } }
+.f-far .stu { animation: stuAway 6s ease-in forwards; opacity: .0; transition: opacity 5s; }
+@keyframes stuAway { from { transform: translate(var(--dx), var(--dy)) scale(1.5); } to { transform: translate(calc(var(--dx) * 1.6), calc(var(--dy) * 1.05)) scale(1.7); } }
+.bikeStu .spin { animation-duration: .8s; }
+.f-out .bikeStu .walking { animation-duration: .9s; }
+.shot-flash .art { filter: sepia(.35) saturate(.9); }
+.past-walk { animation: pastWalk 14s linear infinite; }
+@keyframes pastWalk { from { transform: translateX(-40px); } to { transform: translateX(70px); } }
+.flash-frame { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, transparent 50%, #6b4a2a99 100%); mix-blend-mode: multiply; }
+.shot-flash.on::after { content: ""; position: absolute; inset: 0; background: #fff6e4; animation: flashIn 1.4s ease-out forwards; pointer-events: none; }
+@keyframes flashIn { from { opacity: .9; } to { opacity: 0; } }
+
+/* ---------- 第三幕 面馆 ---------- */
+.shot-ext .door-l { transform: translateX(calc(var(--drag, 0) * 46px)); transition: transform .9s var(--ease); }
+.f-open .shot-ext .door-l { transform: translateX(-48px); }
+.door-light { opacity: .35; transition: opacity 1.2s; }
+.f-open .door-light { opacity: 1; transform: scale(2.4); transform-box: fill-box; transform-origin: center; transition: opacity .8s, transform 1.4s; }
+.steam.idle path { animation-duration: 4.8s; }
+.steam.big { opacity: 0; transition: opacity 1.4s; }
+.f-steam .steam.big { opacity: 1; }
+.steam.big path:nth-child(2) { animation-delay: -1.2s; } .steam.big path:nth-child(3) { animation-delay: -2.3s; }
+.bowl-g { transform-box: fill-box; transform-origin: 50% 80%; transition: transform 1s; }
+.f-steam .bowl-g { transform: scale(1.02); }
+
+/* ---------- 第四幕 樱花 ---------- */
+.follow-petal { position: absolute; left: 53%; top: 21%; width: 14px; height: 10px; border-radius: 70% 0 70% 0; background: linear-gradient(135deg, #fff3ef, #f2c9cb); box-shadow: 0 0 12px #fff6; opacity: 0; }
+.f-follow .follow-petal { animation: followPetal 7.2s cubic-bezier(.4, .05, .5, 1) forwards; }
+@keyframes followPetal {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0); } 8% { opacity: 1; }
+  25% { transform: translate(-24px, 18vh) rotate(90deg); } 50% { transform: translate(18px, 30vh) rotate(200deg); }
+  75% { transform: translate(-14px, 40vh) rotate(290deg); } 100% { opacity: 1; transform: translate(4px, 44vh) rotate(380deg); }
+}
+
+/* ---------- 第五幕 手机 ---------- */
+.fp-phone { position: absolute; left: 50%; bottom: 22%; width: min(62%, 270px); transform: translate(-50%, 70%); opacity: 0; transition: transform 1.4s var(--ease), opacity 1s, bottom 1.6s var(--ease), width 1.6s var(--ease); pointer-events: auto; }
+.f-phone .fp-phone { transform: translate(-50%, 0); opacity: 1; }
+.f-zoom .fp-phone { width: min(86%, 380px); bottom: 14%; }
+.f-deep .fp-phone { width: min(150%, 680px); bottom: -30%; }
+.f-deep .cam { filter: blur(6px) brightness(.6); }
+.phone-hand { position: relative; width: 100%; aspect-ratio: 240 / 300; }
+.phone-hand .ph-back, .phone-hand .ph-front { position: absolute; inset: 0; width: 100%; height: 100%; }
+.phone-hand .ph-front { z-index: 3; pointer-events: none; }
+.phone { position: absolute; z-index: 2; left: 25%; top: 1%; width: 50%; height: 74%; background: #111; border-radius: 14px; padding: 5px; box-shadow: 0 10px 30px #000a, inset 0 0 0 1px #444; }
+.phone .notch { position: absolute; top: 7px; left: 50%; width: 26%; height: 5px; margin-left: -13%; background: #000; border-radius: 3px; z-index: 2; }
+.phone .screen { position: relative; width: 100%; height: 100%; border-radius: 10px; overflow: hidden; background: #f4f1ec; color: #222; font-size: 8px; }
+.feed { padding: 16px 6px 6px; display: flex; flex-direction: column; gap: 5px; height: 100%; }
+.feed-bar { font-size: 8px; font-weight: 600; color: #444; letter-spacing: .1em; }
+.post { background: #fff; border-radius: 6px; padding: 4px; box-shadow: 0 1px 3px #0001; }
+.post .ph { height: 40px; border-radius: 4px; background: #ddd; overflow: hidden; }
+.post .ph svg { width: 100%; height: 100%; display: block; }
+.post .tx { height: 4px; background: #e2ded8; border-radius: 2px; margin-top: 4px; } .post .tx.s { width: 60%; }
+.post .pcap { font-size: 8px; margin-top: 3px; color: #333; }
+.post.p1, .post.p2, .post.p3 { display: none; }
+.f-feed .post.p0 { display: none; }
+.f-feed .post.p1 { display: block; animation: pop .7s var(--ease); }
+.f-feed .post.p1 .ph { height: 74px; }
+.f-feed2 .post.p2, .f-feed2 .post.p3 { display: block; animation: pop .7s var(--ease); }
+.f-feed2 .post .ph { height: 46px !important; }
+@keyframes pop { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.f-zoom .post.p1 { animation: glowPost 3s ease-in-out infinite alternate; }
+@keyframes glowPost { to { box-shadow: 0 0 0 2px #e6c690; } }
+
+/* ---------- 结局画面 ---------- */
+.act.ending .shot .art { height: 100%; }
+
+/* =========================================================
+   远方线
+   ========================================================= */
+/* 出租屋 */
+.case-open, .clothes, .desk-items, .fruit, .lived, .bed-made, .lamp-glow, .lamp-glow2, .ceil-glow, .sky-night, .win-lights rect { opacity: 0; transition: opacity 1.2s ease; }
+.f-suitcase-in .case-open { opacity: 1; }
+.f-suitcase-in .case-layer { opacity: 0; transition: opacity .6s .3s; }
+.f-stowed .case-open { opacity: 0; }
+.f-clothes .case-clothes { opacity: 0; transition: opacity .8s; }
+.f-clothes .clothes, .f-items .desk-items, .f-fruit .fruit, .f-lived .lived, .f-bedmade .bed-made { opacity: 1; }
+.f-bedmade .bed-messy { opacity: 0; transition: opacity 1s; }
+.f-night .sky-night, .f-night .win-lights rect { opacity: 1; }
+.f-lamp .lamp-glow { opacity: 1; } .f-lamp .lamp-glow2 { opacity: .55; }
+.f-ceil .ceil-glow { opacity: 1; }
+.room-dark { opacity: 0; transition: opacity 1.6s ease; pointer-events: none; }
+.f-dusk .room-dark { opacity: .16; } .f-night .room-dark { opacity: .55; } .f-night.f-lamp .room-dark { opacity: .34; }
+.f-dark .room-dark { opacity: .74; } .f-ceil .room-dark { opacity: .06; }
+.room-warm { opacity: 0; mix-blend-mode: soft-light; transition: opacity 1.4s; pointer-events: none; }
+.f-dusk .room-warm { opacity: .35; } .f-lamp .room-warm { opacity: .3; } .f-ceil .room-warm { opacity: .25; }
+/* 第六幕：翻看旧照片时，房间短暂回到第一幕的空荡模样 */
+.f-past .lived, .f-past .clothes, .f-past .desk-items, .f-past .fruit, .f-past .bed-made { opacity: 0; transition: opacity .3s; }
+.f-past .bed-messy { opacity: 1; } .f-past .case-open, .f-past .case-clothes { opacity: 1; transition: opacity .3s; }
+.f-past .room-dark { opacity: .05; } .f-past .sky-night, .f-past .win-lights rect { opacity: 0; }
+.past-tint { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: #b08a5a; mix-blend-mode: color; transition: opacity .4s; }
+.f-past .past-tint { opacity: .55; }
+.f-past .cam::after { content: ""; }
+.f-now .lived { animation: livedIn 1.6s ease both; }
+@keyframes livedIn { from { opacity: 0; } to { opacity: 1; } }
+.door-inside { opacity: 0; transition: opacity .6s; }
+.door-panel { transform-box: fill-box; transform-origin: 0 50%; transition: transform 1.2s var(--ease); }
+.f-dooropen .door-panel { transform: perspective(600px) rotateY(-70deg) scaleX(.5); }
+.f-dooropen .door-inside { opacity: 1; }
+
+/* 手机聊天 / 相册 / 门票 */
+.chat, .album { display: flex; flex-direction: column; gap: 6px; padding: 18px 7px 7px; height: 100%; background: #eef0f2; font-size: 9.5px; line-height: 1.45; }
+.chat-top { text-align: center; font-size: 9px; font-weight: 600; color: #555; padding-bottom: 4px; border-bottom: 1px solid #0001; }
+.bub { max-width: 84%; padding: 6px 8px; border-radius: 10px; color: #222; }
+.bub.in { background: #fff; align-self: flex-start; border-top-left-radius: 3px; }
+.bub.me { background: #9fd59a; align-self: flex-end; border-top-right-radius: 3px; display: none; }
+.chat-input { margin-top: auto; display: flex; gap: 5px; align-items: center; background: #fff; border-radius: 8px; padding: 4px 4px 4px 7px; }
+.chat-input .typed { flex: 1; color: #333; font-size: 8.5px; }
+.chat-input .send { border: 0; background: #4caf50; color: #fff; font-size: 8.5px; border-radius: 6px; padding: 5px 8px; pointer-events: none; }
+.f-sent .sent-b, .f-replied .reply-b { display: block; animation: pop .5s var(--ease); }
+.f-sent .chat-input .typed, .f-replied .chat-input .typed { visibility: hidden; }
+.msg-b { display: none; }
+.f-msg .msg-b { display: block; animation: pop .5s var(--ease); }
+.lock { position: absolute; inset: 0; background: linear-gradient(#1b2848, #0e1528); color: #fff; display: flex; flex-direction: column; align-items: center; padding-top: 22%; font-size: 26px; font-weight: 300; gap: 10px; transition: opacity .5s; }
+.lock small { font-size: 8px; background: #ffffff26; padding: 6px 8px; border-radius: 8px; width: 86%; }
+.f-phone .lock { opacity: 0; pointer-events: none; }
+.thumbs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; }
+.th { aspect-ratio: 4 / 5; background: #c9ccd2; border-radius: 3px; overflow: hidden; }
+.th:nth-child(1) { background: #b9c7b0; } .th:nth-child(2) { background: #d9b9a0; } .th:nth-child(4) { background: #a9b8c9; } .th:nth-child(5) { background: #e2cfa8; } .th:nth-child(6) { background: #c9a9b8; }
+.th.big { grid-column: span 3; aspect-ratio: 4 / 3; box-shadow: 0 0 0 2px #e6c690; }
+.th svg { width: 100%; height: 100%; display: block; }
+.fp-phone.peek { opacity: 1; transform: translate(-50%, 40%); }
+.f-phone .fp-phone.peek { transform: translate(-50%, 0); }
+.ticket { position: absolute; inset: 0; background: linear-gradient(#2a1a2a, #4a2e36); color: #f6e6c8; padding: 20px 9px 9px; display: flex; flex-direction: column; gap: 6px; font-size: 9px; }
+.tk-head { font-size: 8px; letter-spacing: .3em; color: #e6c690; }
+.tk-name { font-size: 12px; font-family: var(--serif); line-height: 1.4; }
+.tk-row { display: flex; flex-direction: column; gap: 2px; color: #d9c6a8; }
+.qr { margin: 6px auto 0; width: 70%; aspect-ratio: 1; display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #fff; padding: 5px; }
+.qr i { background: #fff; } .qr i.b { background: #1a1418; }
+.tk-stamp { position: absolute; left: 50%; top: 56%; transform: translate(-50%, -50%) rotate(-12deg) scale(2); padding: 6px 10px; border: 2px solid #7fd08a; color: #7fd08a; font-weight: 700; font-size: 13px; letter-spacing: .1em; opacity: 0; background: #1a1418cc; border-radius: 4px; }
+.f-checked .tk-stamp { opacity: 1; transform: translate(-50%, -50%) rotate(-12deg) scale(1); transition: .4s cubic-bezier(.3, 1.6, .5, 1); }
+
+/* 地铁 */
+.metro-out .mv.far { animation: mvFar 40s linear infinite; }
+.metro-out .mv.near { animation: mvNear .9s linear infinite; }
+@keyframes mvFar { to { transform: translateX(-800px); } }
+@keyframes mvNear { to { transform: translateX(-100px); } }
+.reflection { opacity: 0; transition: opacity 2.2s ease; }
+.f-reflect .reflection { opacity: .3; }
+.mdoor-l, .mdoor-r { transition: transform 1.6s var(--ease); }
+.f-doors .mdoor-l { transform: translateX(-56px); } .f-doors .mdoor-r { transform: translateX(56px); }
+.platform { opacity: .0; transition: opacity 1s; } .f-doors .platform { opacity: 1; }
+.leavers { opacity: 0; transition: opacity 1s; }
+.f-leave .leavers { opacity: 1; animation: leave 5s ease-in forwards; }
+@keyframes leave { to { transform: translate(-30px, -150px) scale(.7); } }
+.arrive-sign { opacity: .6; } .f-slow .arrive-sign { animation: blink 1s ease-in-out infinite; }
+
+/* 音乐会 */
+.house-lights { transition: opacity 2.4s; } .f-dim .house-lights { opacity: .12; }
+.house-dim { opacity: 0; transition: opacity 2.4s; pointer-events: none; } .f-dim .house-dim { opacity: .5; }
+.spots { opacity: 0; transition: opacity 1.4s; } .f-spot .spots { opacity: 1; }
+.stage-wash { transition: opacity 1.4s; } .f-dim .stage-wash { opacity: .3; } .f-spot .stage-wash { opacity: 1.6; }
+.players { transition: filter 1.4s; filter: brightness(.6); } .f-spot .players { filter: brightness(1.15); }
+.bow { transform-box: fill-box; transform-origin: 0 50%; }
+.f-play .bow { animation: bowing 1.4s ease-in-out infinite alternate; animation-delay: inherit; }
+.f-play .player { animation: sway 2.8s ease-in-out infinite alternate; animation-delay: var(--d); }
+@keyframes bowing { from { transform: translateX(-6px); } to { transform: translateX(6px); } }
+@keyframes sway { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
+.player { transform-box: fill-box; transform-origin: 50% 100%; }
+.aud { animation: audSway 6s ease-in-out infinite alternate; animation-delay: var(--d); }
+@keyframes audSway { to { transform: translateX(2px) rotate(.6deg); } }
+.f-play .fall.dust { opacity: 1; }
+
+/* 美术馆 / 咖啡馆 */
+.pan-strip { transform: translateX(calc(var(--pan, 0) * -400px)); transition: transform 1.6s var(--ease); }
+.visitors.b { opacity: 0; }
+.f-time .visitors.a { animation: swapOut 7s ease-in-out infinite alternate; }
+.f-time .visitors.b { animation: swapIn 7s ease-in-out infinite alternate; }
+@keyframes swapOut { 0%, 35% { opacity: 1; } 65%, 100% { opacity: 0; } }
+@keyframes swapIn { 0%, 35% { opacity: 0; } 65%, 100% { opacity: 1; } }
+.ped { animation: pedWalk var(--pt) linear infinite; animation-delay: var(--pd); }
+.ped:nth-child(even) { animation-direction: reverse; }
+@keyframes pedWalk { from { transform: translateX(-40px); } to { transform: translateX(440px); } }
+
+/* 夜宵 */
+.shot-table .art { animation: orbit 14s ease-in-out infinite alternate; transform-origin: 50% 60%; }
+@keyframes orbit { from { transform: translateX(-1.5%) rotate(-.4deg); } to { transform: translateX(1.5%) rotate(.4deg); } }
+.f-cheers .cup { animation: clink 1.6s cubic-bezier(.3, .7, .3, 1) forwards; }
+@keyframes clink { 0% { transform: none; } 45%, 55% { transform: translate(var(--cx), var(--cy)) rotate(4deg); } 100% { transform: none; } }
+.spark { opacity: 0; }
+.f-cheers .spark { animation: sparkle 1.6s ease forwards; }
+@keyframes sparkle { 0%, 40% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+.f-laugh .head.talk { animation-duration: 1.1s; }
+.ask-bubble { opacity: 0; transform-box: fill-box; transform-origin: 30% 100%; transform: scale(.8); transition: .6s cubic-bezier(.3, 1.4, .5, 1); }
+.f-ask .ask-bubble { opacity: 1; transform: none; }
+
+.f-doors .fp-phone { opacity: 0; transform: translate(-50%, 90%); }
