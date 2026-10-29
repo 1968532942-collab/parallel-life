@@ -166,13 +166,13 @@
     if (!ctx || !on) { if (name === 'stopmusic') { stopMusic(); duck(false); } return; }
     const t = ctx.currentTime + 0.01;
     switch (name) {
-      case 'tap': tone(880, t, 0.12, { vol: 0.03 }); break;
-      case 'chime': bellTone(N.A5, t, 1.6, 0.06); bellTone(N.E5, t + 0.12, 1.8, 0.05); break;
+      case 'tap': noise(t, 0.08, { f: 3000, ft: 'bandpass', vol: 0.015 }); break;
+      case 'chime': noise(t, 0.9, { f: 6500, ft: 'bandpass', q: 1.2, vol: 0.022, attack: 0.05 }); tone(2093, t + 0.03, 0.7, { vol: 0.012 }); break; // 轻微的闪光声，不带明显音高，避免和钢琴配乐撞调
       case 'paper': noise(t, 0.6, { f: 3000, ft: 'bandpass', vol: 0.05, attack: 0.1 }); noise(t + 0.4, 0.5, { f: 2200, ft: 'bandpass', vol: 0.04 }); break;
       case 'hum': tone(330, t, 1.1, { vol: 0.03, slide: 520, attack: 0.3 }); break;
-      case 'choose': tone(N.D5, t, 0.5, { vol: 0.06 }); tone(N.A5, t + 0.14, 0.9, { vol: 0.06 }); break;
+      case 'choose': noise(t, 0.8, { f: 5000, ft: 'bandpass', vol: 0.025, attack: 0.04 }); break;
       case 'bell': for (let i = 0; i < 14; i++) tone(i % 2 ? 1180 : 1320, t + i * 0.09, 0.12, { type: 'square', vol: 0.012, lp: 2400 }); break;
-      case 'flash': noise(t, 1.2, { f: 400, fTo: 4000, ft: 'bandpass', vol: 0.05, attack: 0.5 }); bellTone(N.D5, t + 0.4, 2.4, 0.03); break;
+      case 'flash': noise(t, 1.4, { f: 300, fTo: 3000, ft: 'bandpass', vol: 0.03, attack: 0.6 }); break;
       case 'door': noise(t, 0.5, { f: 500, vol: 0.06 }); tone(140, t, 0.4, { vol: 0.04, slide: 110 }); bellTone(1400, t + 0.15, 1.2, 0.04); break;
       case 'cloth': noise(t, 0.45, { f: 1800, ft: 'bandpass', vol: 0.035, attack: 0.12 }); break;
       case 'click': tone(1800, t, 0.04, { type: 'square', vol: 0.03, lp: 3000 }); tone(900, t + 0.05, 0.05, { vol: 0.03 }); break;
@@ -187,7 +187,7 @@
       case 'cup': bellTone(2100, t, 0.5, 0.04); break;
       case 'clink': bellTone(2600, t, 0.8, 0.05); bellTone(3100, t + 0.06, 0.8, 0.04); bellTone(2350, t + 0.11, 0.8, 0.04); break;
       case 'step': noise(t, 0.18, { f: 500, vol: 0.03 }); break;
-      case 'ending': [N.D4, N.Fs4, N.A4, N.D5].forEach((f, i) => tone(f, t + i * 0.18, 3, { type: 'triangle', vol: 0.04, attack: 0.05 })); break;
+      case 'ending': break; // 结局由配乐承接，不再叠加和弦
     }
   }
   /* 开发用：离线渲染一段主题为 WAV（用于试听与检查音量），不影响正常播放 */

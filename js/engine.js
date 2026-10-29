@@ -109,6 +109,8 @@
   function startAct() {
     const R = STORY.routes[S.route], A = R.acts[S.actIdx];
     MUSIC.play(A.id);
+    const nextA = R.acts[S.actIdx + 1];
+    MUSIC.preload(nextA ? nextA.id : (S.route === 'home' ? 'endHome' : 'endFar'));
     save();
     updateProgress();
     clearHits(); setCap('hidden');
@@ -134,6 +136,7 @@
     (b.add || []).forEach(f => flag(f, true));
     if (b.cam) setCam(b.cam, b.camT);
     if (b.sfx) AUDIO.sfx(b.sfx);
+    if (b.music != null) MUSIC.level(b.music);
     const meta = S.screen === 'act' ? (() => { const A = STORY.routes[S.route].acts[S.actIdx]; return `${A.no} · ${A.title}`; })() : '';
     showLines(b.lines || [], meta);
     choiceBox.innerHTML = '';
@@ -180,6 +183,7 @@
     (a.add || []).forEach(f => flag(f, true));
     if (a.cam) setCam(a.cam, a.camT);
     if (a.sfx) AUDIO.sfx(a.sfx);
+    if (a.music != null) MUSIC.level(a.music, a.musicT);
     if (navigator.vibrate) try { navigator.vibrate(12); } catch (e) {}
     if (a.type === 'choice') return extra && extra();
     setTimeout(() => { if (S.token === t2) advance(); }, a.wait || 900);
@@ -253,6 +257,7 @@
       choiceBox.querySelectorAll('.choice').forEach(btn => btn.addEventListener('click', () => {
         const id = btn.dataset.id;
         AUDIO.sfx('choose');
+        MUSIC.level(.6, 1.2); MUSIC.preload(STORY.routes[id].acts[0].id);
         S.root.classList.add('pick-' + id);
         setCam(id === 'home' ? [36, 44, 1.5] : [64, 44, 1.5], 1.6);
         completeAct(a, tok, () => setTimeout(() => startRoute(id, 0), 1300));
@@ -354,7 +359,8 @@
     clearHits(); setCap('hidden');
     $('#progress').classList.remove('on');
     const E = STORY.endings[route];
-    MUSIC.play(route === 'home' ? 'endHome' : 'endFar');
+    MUSIC.play(route === 'home' ? 'endHome' : 'endFar', 1.2);
+    MUSIC.preload('finale');
     const root = mountScene(E.scene);
     root.classList.add('ending');
     const panel = document.createElement('div');
@@ -370,7 +376,7 @@
 
   function showFinale() {
     S.screen = 'finale'; save();
-    MUSIC.play('finale');
+    MUSIC.play('finale', 1.2);
     clearHits();
     const root = mountScene('finale');
     root.classList.add('finale');

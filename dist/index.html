@@ -944,13 +944,13 @@ window.HEROINE_SRC="data:image/webp;base64,UklGRvqaAABXRUJQVlA4WAoAAAAQAAAArQEAg
     if (!ctx || !on) { if (name === 'stopmusic') { stopMusic(); duck(false); } return; }
     const t = ctx.currentTime + 0.01;
     switch (name) {
-      case 'tap': tone(880, t, 0.12, { vol: 0.03 }); break;
-      case 'chime': bellTone(N.A5, t, 1.6, 0.06); bellTone(N.E5, t + 0.12, 1.8, 0.05); break;
+      case 'tap': noise(t, 0.08, { f: 3000, ft: 'bandpass', vol: 0.015 }); break;
+      case 'chime': noise(t, 0.9, { f: 6500, ft: 'bandpass', q: 1.2, vol: 0.022, attack: 0.05 }); tone(2093, t + 0.03, 0.7, { vol: 0.012 }); break; // 轻微的闪光声，不带明显音高，避免和钢琴配乐撞调
       case 'paper': noise(t, 0.6, { f: 3000, ft: 'bandpass', vol: 0.05, attack: 0.1 }); noise(t + 0.4, 0.5, { f: 2200, ft: 'bandpass', vol: 0.04 }); break;
       case 'hum': tone(330, t, 1.1, { vol: 0.03, slide: 520, attack: 0.3 }); break;
-      case 'choose': tone(N.D5, t, 0.5, { vol: 0.06 }); tone(N.A5, t + 0.14, 0.9, { vol: 0.06 }); break;
+      case 'choose': noise(t, 0.8, { f: 5000, ft: 'bandpass', vol: 0.025, attack: 0.04 }); break;
       case 'bell': for (let i = 0; i < 14; i++) tone(i % 2 ? 1180 : 1320, t + i * 0.09, 0.12, { type: 'square', vol: 0.012, lp: 2400 }); break;
-      case 'flash': noise(t, 1.2, { f: 400, fTo: 4000, ft: 'bandpass', vol: 0.05, attack: 0.5 }); bellTone(N.D5, t + 0.4, 2.4, 0.03); break;
+      case 'flash': noise(t, 1.4, { f: 300, fTo: 3000, ft: 'bandpass', vol: 0.03, attack: 0.6 }); break;
       case 'door': noise(t, 0.5, { f: 500, vol: 0.06 }); tone(140, t, 0.4, { vol: 0.04, slide: 110 }); bellTone(1400, t + 0.15, 1.2, 0.04); break;
       case 'cloth': noise(t, 0.45, { f: 1800, ft: 'bandpass', vol: 0.035, attack: 0.12 }); break;
       case 'click': tone(1800, t, 0.04, { type: 'square', vol: 0.03, lp: 3000 }); tone(900, t + 0.05, 0.05, { vol: 0.03 }); break;
@@ -965,7 +965,7 @@ window.HEROINE_SRC="data:image/webp;base64,UklGRvqaAABXRUJQVlA4WAoAAAAQAAAArQEAg
       case 'cup': bellTone(2100, t, 0.5, 0.04); break;
       case 'clink': bellTone(2600, t, 0.8, 0.05); bellTone(3100, t + 0.06, 0.8, 0.04); bellTone(2350, t + 0.11, 0.8, 0.04); break;
       case 'step': noise(t, 0.18, { f: 500, vol: 0.03 }); break;
-      case 'ending': [N.D4, N.Fs4, N.A4, N.D5].forEach((f, i) => tone(f, t + i * 0.18, 3, { type: 'triangle', vol: 0.04, attack: 0.05 })); break;
+      case 'ending': break; // 结局由配乐承接，不再叠加和弦
     }
   }
   /* 开发用：离线渲染一段主题为 WAV（用于试听与检查音量），不影响正常播放 */
@@ -1028,10 +1028,15 @@ window.MUSIC_FILES = {
   };
   const useGraph = () => !!ctx && /^https?:/.test(location.protocol);
 
+  let level = 1;              // 场景内的情绪强弱（1 = 默认 20%）
+  const cache = {};           // 预加载的音频元素
+  const target = () => VOL * level;
+
   function make(src) {
-    const el = new Audio();
-    el.preload = 'auto'; el.setAttribute('playsinline', ''); el.src = src;
-    const t = { src, el, g: null, vol: 0, timer: 0, looping: false };
+    let el = cache[src];
+    if (el) delete cache[src]; else { el = new Audio(); el.preload = 'auto'; el.src = src; }
+    el.setAttribute('playsinline', '');
+    const t = { src, el, g: null, timer: 0, looping: false, live: false };
     if (useGraph()) {
       try { const node = ctx.createMediaElementSource(el); t.g = ctx.createGain(); t.g.gain.value = 0; node.connect(t.g); t.g.connect(ctx.destination); } catch (e) { t.g = null; }
     }
@@ -1040,38 +1045,57 @@ window.MUSIC_FILES = {
     el.addEventListener('ended', () => { if (cur === t && on) start(src); });
     return t;
   }
+  /* 等功率曲线：淡入用正弦、淡出用余弦，两首交叠时总响度不会塌陷 */
   function fade(t, to, dur) {
+    const fromV = t.g ? t.g.gain.value : t.el.volume;
+    const up = to > fromV;
+    const shape = p => up ? Math.sin(p * Math.PI / 2) : 1 - Math.cos(p * Math.PI / 2);
     if (t.g) {
-      const g = t.g.gain, now = ctx.currentTime;
-      g.cancelScheduledValues(now); g.setValueAtTime(g.value, now); g.linearRampToValueAtTime(to, now + dur);
+      const g = t.g.gain, now = ctx.currentTime, n = 32, curve = new Float32Array(n);
+      for (let i = 0; i < n; i++) curve[i] = Math.max(0.0001, fromV + (to - fromV) * shape(i / (n - 1)));
+      g.cancelScheduledValues(now);
+      try { g.setValueCurveAtTime(curve, now, dur); } catch (e) { g.setValueAtTime(fromV, now); g.linearRampToValueAtTime(to, now + dur); }
       return;
     }
     clearInterval(t.timer);
-    const from = t.el.volume, t0 = performance.now();
+    const t0 = performance.now();
     t.timer = setInterval(() => {
       const p = Math.min(1, (performance.now() - t0) / (dur * 1000));
-      t.el.volume = Math.max(0, Math.min(1, from + (to - from) * p));
+      t.el.volume = Math.max(0, Math.min(1, fromV + (to - fromV) * shape(p)));
       if (p >= 1) clearInterval(t.timer);
-    }, 50);
+    }, 40);
   }
-  function retire(t) {
-    fade(t, 0, FADE);
-    setTimeout(() => { try { t.el.pause(); t.el.removeAttribute('src'); t.el.load(); if (t.g) t.g.disconnect(); } catch (e) {} }, FADE * 1000 + 300);
+  function retire(t, dur) {
+    fade(t, 0, dur || FADE);
+    setTimeout(() => { try { t.el.pause(); t.el.removeAttribute('src'); t.el.load(); if (t.g) t.g.disconnect(); } catch (e) {} }, (dur || FADE) * 1000 + 300);
   }
+  /* 新曲真正开始发声（playing 事件）后才开始交叉淡化：
+     网络慢时旧曲继续放着等它，不会出现“先断掉、再突然冒出来”的空档 */
   function start(src) {
-    const t = make(src);
-    const p = t.el.play(); if (p && p.catch) p.catch(() => {});
-    fade(t, VOL, FADE);
-    if (cur) retire(cur);
+    const t = make(src), old = cur;
     cur = t;
+    let begun = false;
+    const go = () => {
+      if (begun) return; begun = true; t.live = true;
+      if (cur !== t) return;
+      fade(t, target(), FADE);
+      if (old) retire(old);
+    };
+    t.el.addEventListener('playing', go, { once: true });
+    setTimeout(() => { if (!begun && old && cur === t) retire(old); }, 6000);
+    const p = t.el.play(); if (p && p.catch) p.catch(() => {});
   }
   function sync() {
     if (!unlocked) return;
     const src = on ? srcFor(want) : null;
     // 有配乐文件：停掉合成背景乐；没有：交给合成背景乐
     if (window.AUDIO) AUDIO.theme(src || !on ? null : SYNTH(want || 'prologue'));
-    if (!src) { if (cur) { retire(cur); cur = null; } return; }
-    if (cur && cur.src === src) { if (cur.el.paused && !document.hidden) cur.el.play().catch(() => {}); return; }
+    if (!src) { if (cur) { retire(cur, 1.2); cur = null; } return; }
+    if (cur && cur.src === src) {
+      if (cur.el.paused && !document.hidden) cur.el.play().catch(() => {});
+      if (cur.live) fade(cur, target(), 2.5);
+      return;
+    }
     start(src);
   }
 
@@ -1084,8 +1108,11 @@ window.MUSIC_FILES = {
 
   document.addEventListener('visibilitychange', () => {
     if (!cur) return;
-    if (document.hidden) cur.el.pause();
-    else if (on) cur.el.play().catch(() => {});
+    if (document.hidden) { cur.el.pause(); return; }
+    if (!on) return;
+    // 回到页面时轻轻淡入，而不是从原音量直接响起
+    if (cur.g) cur.g.gain.value = 0.0001; else cur.el.volume = 0;
+    cur.el.play().catch(() => {}); fade(cur, target(), 1.2);
   });
 
   window.MUSIC = {
@@ -1094,7 +1121,12 @@ window.MUSIC_FILES = {
       if (ctx && ctx.state === 'suspended') ctx.resume();
       unlocked = true; sync();
     },
-    play(key) { want = key; sync(); },
+    /* 切换场景：level 回到默认，可指定这一段的情绪强弱 */
+    play(key, lv) { const changed = srcFor(key) !== (cur && cur.src); want = key; if (changed || lv != null) level = lv == null ? 1 : lv; sync(); },
+    /* 同一首曲子里的情绪起伏：如舞台灯亮起时音乐稍稍推高 */
+    level(lv, dur) { level = lv; if (cur && cur.live && on) fade(cur, target(), dur || 2.5); },
+    /* 提前缓冲下一幕的曲子，切换时更快接上 */
+    preload(key) { const src = srcFor(key); if (!src || cache[src] || (cur && cur.src === src)) return; const el = new Audio(); el.preload = 'auto'; el.src = src; cache[src] = el; },
     setOn(v) { on = v; sync(); },
     state: () => ({ on, want, src: cur && cur.src, unlocked })
   };
@@ -1121,7 +1153,7 @@ window.STORY = {
       { add: ['l2'], letter: true },
       { add: ['l3'], letter: true },
       { add: ['l4'], letter: true },
-      { add: ['l5'], letter: true },
+      { add: ['l5'], letter: true, music: 1.2 },
       { shot: 'road', cam: [50, 46, 1.12], camT: 6, add: ['fork'], lines: ['一条路，在我面前慢慢分成了两个方向。'],
         act: { type: 'choice', options: [{ id: 'home', label: '留在家乡', sub: '熟悉的街道与灯火' }, { id: 'far', label: '奔赴远方', sub: '陌生城市里的光' }] } }
     ]
@@ -1145,9 +1177,9 @@ window.STORY = {
           { shot: 'gate', cam: [50, 50, 1], add: ['bell'], sfx: 'bell', lines: ['正好赶上晚自习结束。'],
             act: { type: 'tap', hit: 'gate', hint: '点击校门', add: ['out'], cam: [50, 48, 1.16], camT: 3, wait: 1600, sfx: 'chime' } },
           { lines: ['学生们三三两两地走出校门，有人骑着自行车，有人和朋友说说笑笑。'] },
-          { shot: 'flash', cam: [50, 50, 1.06], camT: 5, sfx: 'flash', lines: ['我站在路边，忽然想起很多年前，自己也曾这样背着书包，从这扇校门里走出来。'] },
+          { shot: 'flash', cam: [50, 50, 1.06], camT: 5, sfx: 'flash', music: 1.35, lines: ['我站在路边，忽然想起很多年前，自己也曾这样背着书包，从这扇校门里走出来。'] },
           { cam: [46, 52, 1.14], camT: 5, lines: ['那时候总盼着快点长大。'] },
-          { shot: 'gate', cam: [50, 52, 1.02], camT: 3, add: ['far'], lines: ['没想到，现在的我，已经是一个下班后出来散步的大人了。'] }
+          { shot: 'gate', cam: [50, 52, 1.02], camT: 3, add: ['far'], music: 1, lines: ['没想到，现在的我，已经是一个下班后出来散步的大人了。'] }
         ] },
         { id: 'h3', no: '第三幕', title: '街角的那家面馆', scene: 'noodle', beats: [
           { shot: 'ext', cam: [50, 50, 1], lines: ['天气渐渐冷了。'] },
@@ -1164,7 +1196,7 @@ window.STORY = {
             act: { type: 'tap', hit: 'tree', hint: '点击樱花树，抬头看看', cam: [50, 20, 1.55], camT: 3.2, wait: 2600, sfx: 'chime' } },
           { lines: ['路过那条熟悉的路，我忍不住停下脚步。'],
             act: { type: 'tap', hit: 'canopy', hint: '再点一下，等一阵风', add: ['wind'], wait: 1800, sfx: 'wind' } },
-          { add: ['follow'], cam: [50, 60, 1.08], camT: 7, lines: ['风一吹，花瓣轻轻落下来。'] },
+          { add: ['follow'], cam: [50, 60, 1.08], camT: 7, music: 1.3, lines: ['风一吹，花瓣轻轻落下来。'] },
           { lines: ['我站在树下，忽然觉得，原来留在这里的这些年，我也没有错过很多好看的春天。'] }
         ] },
         { id: 'h5', no: '第五幕', title: '原来，我也在慢慢长大', scene: 'montage', beats: [
@@ -1177,7 +1209,7 @@ window.STORY = {
           { lines: ['看到有人分享另一座城市的生活。'] },
           { add: ['feed2'], lines: ['热闹的街道、精彩的演出、从未见过的风景。'] },
           { add: ['zoom'], lines: ['我看了很久。', '忽然有些好奇：'] },
-          { add: ['deep'], lines: ['如果当年离开了家乡，现在的我，又会过着怎样的生活？'] }
+          { add: ['deep'], music: 1.35, lines: ['如果当年离开了家乡，现在的我，又会过着怎样的生活？'] }
         ] }
       ]
     },
@@ -1211,18 +1243,18 @@ window.STORY = {
           { lines: ['打开手机，看到家人发来的消息：', '“今天忙不忙？记得好好吃饭。”'],
             act: { type: 'tap', hit: 'reply', hint: '点击回复', add: ['replied'], wait: 1600, sfx: 'send' } },
           { add: ['slow'], lines: ['我盯着屏幕看了一会儿，回了一句：', '“挺好的，不用担心。”'] },
-          { rm: ['phone'], add: ['stop', 'doors'], sfx: 'doors', lines: ['下一站到了。'] },
-          { cam: [74, 50, 1.7], camT: 4.5, add: ['leave'], lines: ['我提起包，和人群一起走进了这座城市的夜色里。'] }
+          { rm: ['phone'], add: ['stop', 'doors'], sfx: 'doors', music: .75, lines: ['下一站到了。'] },
+          { cam: [74, 50, 1.7], camT: 4.5, add: ['leave'], music: 1.1, lines: ['我提起包，和人群一起走进了这座城市的夜色里。'] }
         ] },
         { id: 'c3', no: '第三幕', title: '终于听到了那场音乐会', scene: 'concert', beats: [
-          { shot: 'ticket', cam: [50, 50, 1], add: ['phone'], lines: ['周六晚上，我终于去看了那场期待很久的音乐会。'],
+          { shot: 'ticket', cam: [50, 50, 1], add: ['phone'], music: .7, lines: ['周六晚上，我终于去看了那场期待很久的音乐会。'],
             act: { type: 'tap', hit: 'ticket', hint: '点击电子门票，检票入场', add: ['checked'], wait: 1600, sfx: 'chime' } },
-          { shot: 'hall', rm: ['phone'], cam: [50, 52, 1], lines: ['以前总觉得，那些演出离我的生活很远，好像只能隔着屏幕看看。', '可现在，我真的坐在这里了。'] },
-          { add: ['dim'], camT: 3, lines: ['灯光暗下来的那一刻，整个大厅都安静了。'],
-            act: { type: 'tap', hit: 'stage', hint: '点击舞台', add: ['spot', 'play'], cam: [50, 40, 1.26], camT: 9, wait: 2400 } },
+          { shot: 'hall', rm: ['phone'], cam: [50, 52, 1], music: .85, lines: ['以前总觉得，那些演出离我的生活很远，好像只能隔着屏幕看看。', '可现在，我真的坐在这里了。'] },
+          { add: ['dim'], camT: 3, music: .55, lines: ['灯光暗下来的那一刻，整个大厅都安静了。'],
+            act: { type: 'tap', hit: 'stage', hint: '点击舞台', add: ['spot', 'play'], cam: [50, 40, 1.26], camT: 9, wait: 2400, music: 1.6, musicT: 5 } },
           { lines: ['熟悉的旋律响起来时，我坐在座位上，几乎忘了呼吸。'] },
           { cam: [50, 44, 1.12], camT: 5, lines: ['周围的人和我一样，认真听着台上的演出。', '那一瞬间，我突然觉得，当初决定来到这座城市，真好。'] },
-          { shot: 'street', rm: ['play'], cam: [50, 50, 1.02], lines: ['散场的时候，外面的夜风有点凉。', '我一个人慢慢往地铁站走。'] },
+          { shot: 'street', rm: ['play'], cam: [50, 50, 1.02], music: 1, lines: ['散场的时候，外面的夜风有点凉。', '我一个人慢慢往地铁站走。'] },
           { cam: [50, 56, 1.14], camT: 8, lines: ['路边的灯光映在地上，耳边仿佛还回荡着刚才的旋律。', '今晚的快乐，好像可以记很久。'] }
         ] },
         { id: 'c4', no: '第四幕', title: '一个人的周末', scene: 'gallery', beats: [
@@ -1254,9 +1286,9 @@ window.STORY = {
           { lines: ['这一切熟练得不需要思考。'],
             act: { type: 'tap', hit: 'desk', hint: '点击桌面，放下水果', add: ['fruit'], wait: 1100, sfx: 'cloth' } },
           { add: ['phone'], lines: ['我洗完澡，窝在沙发上刷手机。'],
-            act: { type: 'tap', hit: 'photo', hint: '点开这张旧照片', add: ['past'], rm: ['phone'], wait: 1600, sfx: 'flash' } },
+            act: { type: 'tap', hit: 'photo', hint: '点开这张旧照片', add: ['past'], rm: ['phone'], wait: 1600, sfx: 'flash', music: .6 } },
           { lines: ['偶然翻到刚来这座城市时拍的照片。', '那时候的房间空荡荡的，行李箱还摊在地上。'] },
-          { rm: ['past'], add: ['now'], sfx: 'flash', lines: ['而现在，窗台上多了绿植，冰箱里放着喜欢的食物，桌上还有前几天和朋友拍的照片。'] },
+          { rm: ['past'], add: ['now'], sfx: 'flash', music: 1.2, lines: ['而现在，窗台上多了绿植，冰箱里放着喜欢的食物，桌上还有前几天和朋友拍的照片。'] },
           { cam: [50, 42, 1.08], camT: 5, lines: ['我抬头看了看周围。', '突然发现，不知道从什么时候开始，我已经习惯了一个人在这里生活。'] },
           { lines: ['这座城市依然很大。', '但这里已经有了我熟悉的街道、常去的小店，还有想见的人。'] },
           { cam: [50, 50, .98], camT: 6, lines: ['原来，我真的在这里拥有了自己的生活。'] }
@@ -2263,6 +2295,8 @@ window.STORY = {
   function startAct() {
     const R = STORY.routes[S.route], A = R.acts[S.actIdx];
     MUSIC.play(A.id);
+    const nextA = R.acts[S.actIdx + 1];
+    MUSIC.preload(nextA ? nextA.id : (S.route === 'home' ? 'endHome' : 'endFar'));
     save();
     updateProgress();
     clearHits(); setCap('hidden');
@@ -2288,6 +2322,7 @@ window.STORY = {
     (b.add || []).forEach(f => flag(f, true));
     if (b.cam) setCam(b.cam, b.camT);
     if (b.sfx) AUDIO.sfx(b.sfx);
+    if (b.music != null) MUSIC.level(b.music);
     const meta = S.screen === 'act' ? (() => { const A = STORY.routes[S.route].acts[S.actIdx]; return `${A.no} · ${A.title}`; })() : '';
     showLines(b.lines || [], meta);
     choiceBox.innerHTML = '';
@@ -2334,6 +2369,7 @@ window.STORY = {
     (a.add || []).forEach(f => flag(f, true));
     if (a.cam) setCam(a.cam, a.camT);
     if (a.sfx) AUDIO.sfx(a.sfx);
+    if (a.music != null) MUSIC.level(a.music, a.musicT);
     if (navigator.vibrate) try { navigator.vibrate(12); } catch (e) {}
     if (a.type === 'choice') return extra && extra();
     setTimeout(() => { if (S.token === t2) advance(); }, a.wait || 900);
@@ -2407,6 +2443,7 @@ window.STORY = {
       choiceBox.querySelectorAll('.choice').forEach(btn => btn.addEventListener('click', () => {
         const id = btn.dataset.id;
         AUDIO.sfx('choose');
+        MUSIC.level(.6, 1.2); MUSIC.preload(STORY.routes[id].acts[0].id);
         S.root.classList.add('pick-' + id);
         setCam(id === 'home' ? [36, 44, 1.5] : [64, 44, 1.5], 1.6);
         completeAct(a, tok, () => setTimeout(() => startRoute(id, 0), 1300));
@@ -2508,7 +2545,8 @@ window.STORY = {
     clearHits(); setCap('hidden');
     $('#progress').classList.remove('on');
     const E = STORY.endings[route];
-    MUSIC.play(route === 'home' ? 'endHome' : 'endFar');
+    MUSIC.play(route === 'home' ? 'endHome' : 'endFar', 1.2);
+    MUSIC.preload('finale');
     const root = mountScene(E.scene);
     root.classList.add('ending');
     const panel = document.createElement('div');
@@ -2524,7 +2562,7 @@ window.STORY = {
 
   function showFinale() {
     S.screen = 'finale'; save();
-    MUSIC.play('finale');
+    MUSIC.play('finale', 1.2);
     clearHits();
     const root = mountScene('finale');
     root.classList.add('finale');

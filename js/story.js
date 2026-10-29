@@ -17,7 +17,7 @@ window.STORY = {
       { add: ['l2'], letter: true },
       { add: ['l3'], letter: true },
       { add: ['l4'], letter: true },
-      { add: ['l5'], letter: true },
+      { add: ['l5'], letter: true, music: 1.2 },
       { shot: 'road', cam: [50, 46, 1.12], camT: 6, add: ['fork'], lines: ['一条路，在我面前慢慢分成了两个方向。'],
         act: { type: 'choice', options: [{ id: 'home', label: '留在家乡', sub: '熟悉的街道与灯火' }, { id: 'far', label: '奔赴远方', sub: '陌生城市里的光' }] } }
     ]
@@ -41,9 +41,9 @@ window.STORY = {
           { shot: 'gate', cam: [50, 50, 1], add: ['bell'], sfx: 'bell', lines: ['正好赶上晚自习结束。'],
             act: { type: 'tap', hit: 'gate', hint: '点击校门', add: ['out'], cam: [50, 48, 1.16], camT: 3, wait: 1600, sfx: 'chime' } },
           { lines: ['学生们三三两两地走出校门，有人骑着自行车，有人和朋友说说笑笑。'] },
-          { shot: 'flash', cam: [50, 50, 1.06], camT: 5, sfx: 'flash', lines: ['我站在路边，忽然想起很多年前，自己也曾这样背着书包，从这扇校门里走出来。'] },
+          { shot: 'flash', cam: [50, 50, 1.06], camT: 5, sfx: 'flash', music: 1.35, lines: ['我站在路边，忽然想起很多年前，自己也曾这样背着书包，从这扇校门里走出来。'] },
           { cam: [46, 52, 1.14], camT: 5, lines: ['那时候总盼着快点长大。'] },
-          { shot: 'gate', cam: [50, 52, 1.02], camT: 3, add: ['far'], lines: ['没想到，现在的我，已经是一个下班后出来散步的大人了。'] }
+          { shot: 'gate', cam: [50, 52, 1.02], camT: 3, add: ['far'], music: 1, lines: ['没想到，现在的我，已经是一个下班后出来散步的大人了。'] }
         ] },
         { id: 'h3', no: '第三幕', title: '街角的那家面馆', scene: 'noodle', beats: [
           { shot: 'ext', cam: [50, 50, 1], lines: ['天气渐渐冷了。'] },
@@ -60,7 +60,7 @@ window.STORY = {
             act: { type: 'tap', hit: 'tree', hint: '点击樱花树，抬头看看', cam: [50, 20, 1.55], camT: 3.2, wait: 2600, sfx: 'chime' } },
           { lines: ['路过那条熟悉的路，我忍不住停下脚步。'],
             act: { type: 'tap', hit: 'canopy', hint: '再点一下，等一阵风', add: ['wind'], wait: 1800, sfx: 'wind' } },
-          { add: ['follow'], cam: [50, 60, 1.08], camT: 7, lines: ['风一吹，花瓣轻轻落下来。'] },
+          { add: ['follow'], cam: [50, 60, 1.08], camT: 7, music: 1.3, lines: ['风一吹，花瓣轻轻落下来。'] },
           { lines: ['我站在树下，忽然觉得，原来留在这里的这些年，我也没有错过很多好看的春天。'] }
         ] },
         { id: 'h5', no: '第五幕', title: '原来，我也在慢慢长大', scene: 'montage', beats: [
@@ -73,7 +73,7 @@ window.STORY = {
           { lines: ['看到有人分享另一座城市的生活。'] },
           { add: ['feed2'], lines: ['热闹的街道、精彩的演出、从未见过的风景。'] },
           { add: ['zoom'], lines: ['我看了很久。', '忽然有些好奇：'] },
-          { add: ['deep'], lines: ['如果当年离开了家乡，现在的我，又会过着怎样的生活？'] }
+          { add: ['deep'], music: 1.35, lines: ['如果当年离开了家乡，现在的我，又会过着怎样的生活？'] }
         ] }
       ]
     },
@@ -107,18 +107,18 @@ window.STORY = {
           { lines: ['打开手机，看到家人发来的消息：', '“今天忙不忙？记得好好吃饭。”'],
             act: { type: 'tap', hit: 'reply', hint: '点击回复', add: ['replied'], wait: 1600, sfx: 'send' } },
           { add: ['slow'], lines: ['我盯着屏幕看了一会儿，回了一句：', '“挺好的，不用担心。”'] },
-          { rm: ['phone'], add: ['stop', 'doors'], sfx: 'doors', lines: ['下一站到了。'] },
-          { cam: [74, 50, 1.7], camT: 4.5, add: ['leave'], lines: ['我提起包，和人群一起走进了这座城市的夜色里。'] }
+          { rm: ['phone'], add: ['stop', 'doors'], sfx: 'doors', music: .75, lines: ['下一站到了。'] },
+          { cam: [74, 50, 1.7], camT: 4.5, add: ['leave'], music: 1.1, lines: ['我提起包，和人群一起走进了这座城市的夜色里。'] }
         ] },
         { id: 'c3', no: '第三幕', title: '终于听到了那场音乐会', scene: 'concert', beats: [
-          { shot: 'ticket', cam: [50, 50, 1], add: ['phone'], lines: ['周六晚上，我终于去看了那场期待很久的音乐会。'],
+          { shot: 'ticket', cam: [50, 50, 1], add: ['phone'], music: .7, lines: ['周六晚上，我终于去看了那场期待很久的音乐会。'],
             act: { type: 'tap', hit: 'ticket', hint: '点击电子门票，检票入场', add: ['checked'], wait: 1600, sfx: 'chime' } },
-          { shot: 'hall', rm: ['phone'], cam: [50, 52, 1], lines: ['以前总觉得，那些演出离我的生活很远，好像只能隔着屏幕看看。', '可现在，我真的坐在这里了。'] },
-          { add: ['dim'], camT: 3, lines: ['灯光暗下来的那一刻，整个大厅都安静了。'],
-            act: { type: 'tap', hit: 'stage', hint: '点击舞台', add: ['spot', 'play'], cam: [50, 40, 1.26], camT: 9, wait: 2400 } },
+          { shot: 'hall', rm: ['phone'], cam: [50, 52, 1], music: .85, lines: ['以前总觉得，那些演出离我的生活很远，好像只能隔着屏幕看看。', '可现在，我真的坐在这里了。'] },
+          { add: ['dim'], camT: 3, music: .55, lines: ['灯光暗下来的那一刻，整个大厅都安静了。'],
+            act: { type: 'tap', hit: 'stage', hint: '点击舞台', add: ['spot', 'play'], cam: [50, 40, 1.26], camT: 9, wait: 2400, music: 1.6, musicT: 5 } },
           { lines: ['熟悉的旋律响起来时，我坐在座位上，几乎忘了呼吸。'] },
           { cam: [50, 44, 1.12], camT: 5, lines: ['周围的人和我一样，认真听着台上的演出。', '那一瞬间，我突然觉得，当初决定来到这座城市，真好。'] },
-          { shot: 'street', rm: ['play'], cam: [50, 50, 1.02], lines: ['散场的时候，外面的夜风有点凉。', '我一个人慢慢往地铁站走。'] },
+          { shot: 'street', rm: ['play'], cam: [50, 50, 1.02], music: 1, lines: ['散场的时候，外面的夜风有点凉。', '我一个人慢慢往地铁站走。'] },
           { cam: [50, 56, 1.14], camT: 8, lines: ['路边的灯光映在地上，耳边仿佛还回荡着刚才的旋律。', '今晚的快乐，好像可以记很久。'] }
         ] },
         { id: 'c4', no: '第四幕', title: '一个人的周末', scene: 'gallery', beats: [
@@ -150,9 +150,9 @@ window.STORY = {
           { lines: ['这一切熟练得不需要思考。'],
             act: { type: 'tap', hit: 'desk', hint: '点击桌面，放下水果', add: ['fruit'], wait: 1100, sfx: 'cloth' } },
           { add: ['phone'], lines: ['我洗完澡，窝在沙发上刷手机。'],
-            act: { type: 'tap', hit: 'photo', hint: '点开这张旧照片', add: ['past'], rm: ['phone'], wait: 1600, sfx: 'flash' } },
+            act: { type: 'tap', hit: 'photo', hint: '点开这张旧照片', add: ['past'], rm: ['phone'], wait: 1600, sfx: 'flash', music: .6 } },
           { lines: ['偶然翻到刚来这座城市时拍的照片。', '那时候的房间空荡荡的，行李箱还摊在地上。'] },
-          { rm: ['past'], add: ['now'], sfx: 'flash', lines: ['而现在，窗台上多了绿植，冰箱里放着喜欢的食物，桌上还有前几天和朋友拍的照片。'] },
+          { rm: ['past'], add: ['now'], sfx: 'flash', music: 1.2, lines: ['而现在，窗台上多了绿植，冰箱里放着喜欢的食物，桌上还有前几天和朋友拍的照片。'] },
           { cam: [50, 42, 1.08], camT: 5, lines: ['我抬头看了看周围。', '突然发现，不知道从什么时候开始，我已经习惯了一个人在这里生活。'] },
           { lines: ['这座城市依然很大。', '但这里已经有了我熟悉的街道、常去的小店，还有想见的人。'] },
           { cam: [50, 50, .98], camT: 6, lines: ['原来，我真的在这里拥有了自己的生活。'] }
