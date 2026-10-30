@@ -41,8 +41,8 @@ window.STORY = {
           { shot: 'gate', cam: [50, 50, 1], add: ['bell'], sfx: 'bell', lines: ['正好赶上晚自习结束。'],
             act: { type: 'tap', hit: 'gate', hint: '点击校门', add: ['out'], cam: [50, 48, 1.16], camT: 3, wait: 1600, sfx: 'chime' } },
           { lines: ['学生们三三两两地走出校门，有人骑着自行车，有人和朋友说说笑笑。'] },
-          { shot: 'flash', cam: [50, 50, 1.06], camT: 5, sfx: 'flash', music: 1.35, lines: ['我站在路边，忽然想起很多年前，自己也曾这样背着书包，从这扇校门里走出来。'] },
-          { cam: [46, 52, 1.14], camT: 5, lines: ['那时候总盼着快点长大。'] },
+          { shot: 'flash', cam: [50, 50, 1], camT: 2, sfx: 'flash', music: 1.35, add: ['flashback'], lines: ['我站在路边，忽然想起很多年前，自己也曾这样背着书包，从这扇校门里走出来。'] },
+          { cam: [50, 50, 1.02], camT: 5, lines: ['那时候总盼着快点长大。'] },
           { shot: 'gate', cam: [50, 52, 1.02], camT: 3, add: ['far'], music: 1, lines: ['没想到，现在的我，已经是一个下班后出来散步的大人了。'] }
         ] },
         { id: 'h3', no: '第三幕', title: '街角的那家面馆', scene: 'noodle', beats: [
@@ -65,7 +65,7 @@ window.STORY = {
         ] },
         { id: 'h5', no: '第五幕', title: '原来，我也在慢慢长大', scene: 'montage', beats: [
           { shot: 'market', cam: [50, 52, 1.02], lines: ['又是一个普通的周末。'] },
-          { cam: [50, 52, 1.1], camT: 6, lines: ['上午陪家人去超市买东西，下午回家收拾房间，晚上一起做饭。'] },
+          { cam: [50, 52, 1.02], camT: 6, lines: ['上午陪家人去超市买东西，下午回家收拾房间，晚上一起做饭。'] },
           { shot: 'tidy', cam: [50, 50, 1.04], lines: ['以前总觉得这些事情很无聊。'] },
           { shot: 'kitchen', cam: [50, 48, 1.04], lines: ['现在却会主动帮忙，偶尔还能替家里解决一些麻烦。'] },
           { shot: 'sofa', cam: [50, 50, 1], add: ['phone'], lines: ['吃完晚饭，我坐在沙发上刷手机。'],

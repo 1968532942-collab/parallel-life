@@ -71,7 +71,7 @@
     build() {
       const walk = frame('h2_walk', vid('v_walk', 'loop', 'mount') + `<div class="family-wrap">${layer('h2_family', 'family walker')}</div>`);
       const gate = frame('h2_gate', hit('gate', 34, 34, 32, 26) + vid('v_gate', 'once', 'out', 'far') + `<div class="students-wrap">${layer('h2_students', 'students walker')}</div>`);
-      const flash = frame('h2_flash');
+      const flash = frame('h2_flash', vid('v_flash', 'once', 'flashback'));
       return { cam: shot('walk', walk, U.fall('leaf', 9, { t0: 11, t1: 17, s0: 9, s1: 14 })) + shot('gate', gate, U.fall('leaf', 5, { t0: 13, t1: 18, s0: 8, s1: 12 })) + shot('flash', flash, '<div class="flash-frame"></div>' + U.fall('glow', 14, { t0: 12, t1: 18, s0: 2, s1: 5 })) };
     }
   };
@@ -104,7 +104,7 @@
         <div class="post p2"><div class="ph hall">${M.miniHall()}</div><div class="pcap">今晚的音乐会</div></div>
         <div class="post p3"><div class="ph gal">${M.miniGallery()}</div><div class="pcap">周末去了美术馆</div></div></div>`;
       return {
-        cam: shot('market', frame('h5_market')) + shot('tidy', frame('h5_tidy'), U.fall('glow', 12, { t0: 14, t1: 20, s0: 2, s1: 3 })) + shot('kitchen', frame('h5_kitchen') + steam(56, 18, 16)) + shot('sofa', frame('h5_sofa')),
+        cam: shot('market', frame('h5_market', vid('v_market', 'once', 'mount'))) + shot('tidy', frame('h5_tidy'), U.fall('glow', 12, { t0: 14, t1: 20, s0: 2, s1: 3 })) + shot('kitchen', frame('h5_kitchen') + steam(56, 18, 16)) + shot('sofa', frame('h5_sofa')),
         fp: `<div class="fp-phone" data-hit="phone">${FIG.phoneHand(screen)}</div>`
       };
     }
