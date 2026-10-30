@@ -36,23 +36,24 @@ window.STORY = {
           { cam: [50, 60, 1.34], camT: 4, add: ['close'], lines: ['原来，又是一年秋天了。'] }
         ] },
         { id: 'h2', no: '第二幕', title: '下班后的晚风', scene: 'walk', beats: [
-          { shot: 'walk', cam: [50, 54, 1.02], lines: ['晚饭后，我和家人出门散步。'],
+          { shot: 'walk', cam: [50, 54, 1.02], lines: ['吃完晚饭，我陪爸妈出门散步。'],
             act: { type: 'tap', hit: 'family', hint: '点击家人，跟上他们', add: ['follow-family'], cam: [46, 56, 1.08], camT: 3, wait: 1300, sfx: 'step' } },
-          { cam: [50, 56, 1.1], camT: 6, lines: ['一路聊着家常，不知不觉走到了以前读书的高中附近。'] },
+          { cam: [50, 56, 1.1], camT: 6, lines: ['一路聊着谁家孩子结婚了、菜又涨价了，不知不觉，走到了以前读书的高中。'] },
           { shot: 'gate', cam: [50, 50, 1], add: ['bell'], sfx: 'bell', lines: ['正好赶上晚自习结束。'],
             act: { type: 'tap', hit: 'gate', hint: '点击校门', add: ['out'], cam: [50, 48, 1.16], camT: 3, wait: 1600, sfx: 'chime' } },
           { lines: ['学生们三三两两地走出校门，有人骑着自行车，有人和朋友说说笑笑。'] },
-          { shot: 'flash', cam: [50, 50, 1], camT: 2, sfx: 'flash', music: 1.35, add: ['flashback'], lines: ['我站在路边，忽然想起很多年前，自己也曾这样背着书包，从这扇校门里走出来。'] },
+          { shot: 'flash', cam: [50, 50, 1], camT: 2, sfx: 'flash', music: 1.35, add: ['flashback'], lines: ['我站在路边，想起很多年前，我也是这样背着沉沉的书包，和同学说说笑笑，从这扇门里走出来。'] },
           { cam: [50, 50, 1.02], camT: 5, lines: ['那时候总盼着快点长大。'] },
-          { shot: 'gate', cam: [50, 52, 1.02], camT: 3, add: ['far'], music: 1, lines: ['没想到，现在的我，已经是一个下班后出来散步的大人了。'] }
+          { shot: 'gate', cam: [50, 52, 1.02], camT: 3, add: ['far'], music: 1, lines: ['一转眼，我已经是那个下了班、陪爸妈出来散步的大人了。'] }
         ] },
         { id: 'h3', no: '第三幕', title: '街角的那家面馆', scene: 'noodle', beats: [
           { shot: 'ext', cam: [50, 50, 1], lines: ['天气渐渐冷了。'] },
-          { cam: [50, 48, 1.08], camT: 3, lines: ['下班后，我又去了那家从学生时代就常吃的面馆。'],
+          { cam: [50, 48, 1.08], camT: 3, lines: ['下了班，我又来到那家从高中吃到现在的面馆。'],
             act: { type: 'swipe', dir: 'left', hit: 'door', hint: '向左滑动，推开面馆的门', add: ['open'], cam: [50, 46, 1.5], camT: 1.6, wait: 1500, sfx: 'door' } },
-          { shot: 'int', cam: [50, 50, 1.02], lines: ['老板好像比以前老了一些，但味道还是熟悉的味道。'],
+          { shot: 'int', cam: [50, 50, 1.02], lines: ['老板好像比以前老了一些。'],
             act: { type: 'tap', hit: 'menu', hint: '点菜单，要一碗熟悉的牛肉面', add: ['order'], wait: 1800, sfx: 'chime' } },
-          { cam: [50, 52, 1.04], lines: ['旁边坐着几个刚放学的学生，边吃边讨论着考试。'],
+          { lines: ['面端上来，还是那个味道，一口下去，整个人都暖了。'] },
+          { cam: [50, 52, 1.04], lines: ['旁边一桌是刚放学的学生，边吃边对答案，为一道题争个不停。'],
             act: { type: 'tap', hit: 'bowl', hint: '点一下面碗', add: ['steam'], wait: 1400, sfx: 'chime' } },
           { cam: [50, 60, 1.3], camT: 4, lines: ['听着他们聊天，我忍不住笑了笑。'] },
           { cam: [50, 62, 1.42], camT: 4, lines: ['以前的我，也是这样。'] }
@@ -68,16 +69,16 @@ window.STORY = {
         { id: 'h5', no: '第五幕', title: '原来，我也在慢慢长大', scene: 'montage', beats: [
           { shot: 'market', cam: [50, 52, 1.02], lines: ['又是一个普通的周末。'],
             act: { type: 'tap', hit: 'cart', hint: '点购物车，陪家人逛超市', add: ['cart'], wait: 1500, sfx: 'roll' } },
-          { cam: [50, 52, 1.02], camT: 6, lines: ['上午陪家人去超市买东西，下午回家收拾房间，晚上一起做饭。'] },
+          { cam: [50, 52, 1.02], camT: 6, lines: ['上午陪爸妈逛超市，下午帮着收拾屋子，晚上一起做饭。'] },
           { shot: 'tidy', cam: [50, 50, 1.02],
             act: { type: 'tap', hit: 'laundry', hint: '帮妈妈一起叠衣服', add: ['tidy'], wait: 900, sfx: 'cloth' } },
-          { lines: ['以前总觉得这些事情很无聊。'] },
+          { lines: ['以前总嫌这些事又琐碎又无聊。'] },
           { shot: 'kitchen', cam: [50, 48, 1.02],
             act: { type: 'tap', hit: 'pot', hint: '点锅，帮妈妈炒菜', add: ['kitchen'], wait: 900, sfx: 'sizzle' } },
-          { lines: ['现在却会主动帮忙，偶尔还能替家里解决一些麻烦。'] },
+          { lines: ['现在却会主动搭把手，家里有些事，也渐渐能替爸妈拿主意了。'] },
           { shot: 'sofa', cam: [50, 50, 1], add: ['phone'], lines: ['吃完晚饭，我坐在沙发上刷手机。'],
             act: { type: 'tap', hit: 'phone', hint: '点击手机', add: ['feed'], wait: 1200, sfx: 'tap' } },
-          { lines: ['看到有人分享另一座城市的生活。'] },
+          { lines: ['刷到有人在分享另一座城市的生活。'] },
           { add: ['feed2'], lines: ['热闹的街道、精彩的演出、从未见过的风景。'] },
           { add: ['zoom'], lines: ['我看了很久。', '忽然有些好奇：'] },
           { add: ['deep'], music: 1.35, lines: ['如果当年离开了家乡，现在的我，又会过着怎样的生活？'] }
@@ -90,7 +91,7 @@ window.STORY = {
       acts: [
         { id: 'c1', no: '第一幕', title: '终于有了自己的小房间', scene: 'room', init: ['first'], beats: [
           { cam: [50, 50, 1], lines: ['来到这座城市的第一个星期，我几乎每天都在找房子。', '看了好几间，不是太贵，就是离公司太远。'] },
-          { lines: ['最后，我租下了一间不大的房间。'],
+          { lines: ['最后，我租下了一间小小的房间，不大，但有一扇能看见高楼的窗。'],
             act: { type: 'drag', hit: 'suitcase', drop: 'dropzone', hint: '拖动行李箱，把它拉进房间', add: ['suitcase-in'], wait: 900, sfx: 'roll' } },
           { lines: ['搬进去那天，我拖着行李箱，来来回回收拾了很久。'],
             act: { type: 'tap', hit: 'bed', hint: '点击床铺，整理被褥', add: ['bedmade'], wait: 1000, sfx: 'cloth' } },
@@ -99,8 +100,8 @@ window.STORY = {
           { add: ['dusk'], lines: ['天渐渐黑了。'],
             act: { type: 'tap', hit: 'lamp', hint: '点击台灯，照亮房间', add: ['lamp', 'night'], wait: 1500, sfx: 'click' } },
           { cam: [56, 34, 1.16], camT: 4, lines: ['我坐在床边，看着窗外一栋栋亮起灯的高楼。'] },
-          { cam: [50, 46, 1.04], camT: 3, lines: ['突然意识到，从今天开始，买菜、做饭、交房租，生活里的大事小事，都要自己操心了。'] },
-          { add: ['phone'], lines: ['我打开手机，给家里发了一条消息：'],
+          { cam: [50, 46, 1.04], camT: 3, lines: ['那一刻才真的明白：从今天起，买菜、做饭、交房租，大大小小的事，都得自己来了。'] },
+          { add: ['phone'], lines: ['我拿起手机，给妈妈发了一条消息：'],
             act: { type: 'tap', hit: 'send', hint: '点击发送', add: ['sent'], wait: 1400, sfx: 'send' } },
           { rm: ['phone'], cam: [50, 50, .96], camT: 6, lines: ['“我收拾好了，房间还不错。”', '虽然只是租来的，但这里终于有了一点家的样子。'] }
         ] },
@@ -111,11 +112,11 @@ window.STORY = {
           { lines: ['车窗上映出我的脸，外面是一栋接一栋掠过去的高楼和灯光。'] },
           { cam: [50, 50, 1.02], camT: 2, sfx: 'arrive', add: ['peek'], lines: ['我坐在角落里，听着列车到站的提示音，忽然有一点想家。'],
             act: { type: 'tap', hit: 'myphone', hint: '点击手机', add: ['phone', 'msg'], wait: 1500, sfx: 'msg' } },
-          { lines: ['打开手机，看到家人发来的消息：', '“今天忙不忙？记得好好吃饭。”'],
+          { lines: ['手机亮了，是妈妈发来的消息：', '“今天忙不忙？记得好好吃饭。”'],
             act: { type: 'tap', hit: 'reply', hint: '点击回复', add: ['replied'], wait: 1600, sfx: 'send' } },
           { add: ['slow'], lines: ['我盯着屏幕看了一会儿，回了一句：', '“挺好的，不用担心。”'] },
           { rm: ['phone'], add: ['stop', 'doors'], sfx: 'doors', music: .75, lines: ['下一站到了。'] },
-          { cam: [92, 40, 1.9], camT: 5.5, add: ['leave'], music: 1.1, lines: ['我提起包，和人群一起走进了这座城市的夜色里。'] }
+          { cam: [92, 40, 1.9], camT: 5.5, add: ['leave'], music: 1.1, lines: ['我提起包，跟着下车的人，走进了这座城市的夜色里。'] }
         ] },
         { id: 'c3', no: '第三幕', title: '终于听到了那场音乐会', scene: 'concert', beats: [
           { shot: 'ticket', cam: [50, 50, 1], add: ['phone'], music: .7, lines: ['周六晚上，我终于去看了那场期待很久的音乐会。'],
@@ -156,7 +157,7 @@ window.STORY = {
             act: { type: 'tap', hit: 'door', hint: '点击房门', add: ['dooropen'], cam: [50, 46, 1.4], camT: 1.4, wait: 1300, sfx: 'door' } },
           { shot: 'room', cam: [50, 50, 1], lines: ['走进出租屋，换鞋、开灯，把水果放进冰箱。'],
             act: { type: 'tap', hit: 'switch', hint: '点击开关，打开灯', add: ['ceil'], rm: ['dark'], wait: 1100, sfx: 'click' } },
-          { lines: ['这一切熟练得不需要思考。'],
+          { lines: ['这些事，早就不用想就会做了。'],
             act: { type: 'tap', hit: 'desk', hint: '点击桌面，放下水果', add: ['fruit'], wait: 1100, sfx: 'cloth' } },
           { add: ['phone'], lines: ['我洗完澡，窝在沙发上刷手机。'],
             act: { type: 'tap', hit: 'photo', hint: '点开这张旧照片', add: ['past'], rm: ['phone'], wait: 1600, sfx: 'flash', music: .6 } },
@@ -178,7 +179,7 @@ window.STORY = {
     },
     far: {
       title: '逐光者', en: 'THE LIGHT CHASER', sub: '原来，我真的走到了曾经向往的地方。', scene: 'endFar',
-      lines: ['我曾拖着行李箱，', '一个人走进陌生的城市。', '', '也曾在深夜的地铁上，', '对着家人的消息偷偷想家。', '', '后来，我听到了期待已久的音乐会，', '看过喜欢的画展，', '也认识了一群有趣的新朋友。', '', '这里有过孤独，有过疲惫，', '也有很多不曾想象过的快乐。', '', '曾经陌生的街道，', '如今已经有了熟悉的路灯。', '', '那间最初空荡荡的小房间，', '也一点一点有了生活的模样。', '', '如果人生真的有另一条路，', '我希望那里的我，也过得很好。', '', '而此刻，我很庆幸，当初真的出发了。'],
+      lines: ['我曾拖着行李箱，', '一个人走进陌生的城市。', '', '也曾在深夜的地铁上，', '对着家人的消息偷偷想家。', '', '后来，我听到了期待已久的音乐会，', '看过喜欢的画展，', '也认识了一群有趣的新朋友。', '', '这里有过孤独，有过疲惫，', '也有很多不曾想象过的快乐。', '', '曾经陌生的街道，', '如今已经有了熟悉的路灯。', '', '那间最初空荡荡的小房间，', '也一点一点有了生活的模样。', '', '如果人生真的有另一条路，', '我希望那里的我，也能过得很好。', '', '而此刻，我很庆幸，当初真的出发了。'],
       poster: ['那间最初空荡荡的小房间，', '也一点一点有了生活的模样。']
     }
   },
