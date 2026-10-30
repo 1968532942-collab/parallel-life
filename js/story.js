@@ -108,7 +108,7 @@ window.STORY = {
             act: { type: 'tap', hit: 'reply', hint: '点击回复', add: ['replied'], wait: 1600, sfx: 'send' } },
           { add: ['slow'], lines: ['我盯着屏幕看了一会儿，回了一句：', '“挺好的，不用担心。”'] },
           { rm: ['phone'], add: ['stop', 'doors'], sfx: 'doors', music: .75, lines: ['下一站到了。'] },
-          { cam: [74, 50, 1.7], camT: 4.5, add: ['leave'], music: 1.1, lines: ['我提起包，和人群一起走进了这座城市的夜色里。'] }
+          { cam: [92, 40, 1.9], camT: 5.5, add: ['leave'], music: 1.1, lines: ['我提起包，和人群一起走进了这座城市的夜色里。'] }
         ] },
         { id: 'c3', no: '第三幕', title: '终于听到了那场音乐会', scene: 'concert', beats: [
           { shot: 'ticket', cam: [50, 50, 1], add: ['phone'], music: .7, lines: ['周六晚上，我终于去看了那场期待很久的音乐会。'],

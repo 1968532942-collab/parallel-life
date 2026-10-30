@@ -147,3 +147,23 @@
 .frame > video.vid.playing { opacity: 1; }
 .frame > video.vid.gone { opacity: 0; transition: opacity 3s ease; }
 .frame > video.vid.playing ~ .family-wrap, .frame > video.vid.playing ~ .students-wrap { opacity: 0 !important; animation: none; transition: opacity 1.2s; }
+
+/* 手机聊天（出租屋发消息、地铁回消息、翻旧照片）：手机抬高，屏幕落在文字面板上方；袖子向下接长，不会在画面中间断开 */
+.act[data-scene="room"].f-phone .fp-phone, .act[data-scene="metro"].f-phone .fp-phone { width: min(68%, 300px); bottom: max(24%, 150px); transform: translate(-50%, 0); }
+.phone-hand.art::after { content: ""; position: absolute; left: 0; top: 99.5%; width: 100%; height: 80vh; background-image: var(--hand-img); background-repeat: no-repeat; background-size: 100% 6000%; background-position: 50% 100%; filter: blur(1.5px); }
+.act[data-scene="metro"].f-doors .fp-phone { opacity: 0; transform: translate(-50%, 120%); transition: transform 1.6s var(--ease), opacity 1s; }
+
+/* 下车：第一人称起身走向车门——镜头推向车门并逐渐失焦，门外暖光漫开，再融进夜色里的街灯 */
+.exit-light { position: absolute; left: 60%; top: 0; width: 60%; height: 100%; background: radial-gradient(ellipse 60% 45% at 60% 45%, #fff2d6, #ffd9a0cc 30%, #ffc98a55 55%, transparent 75%); opacity: 0; mix-blend-mode: screen; pointer-events: none; }
+.f-leave .exit-light { animation: exitBloom 5.5s ease-in forwards; }
+@keyframes exitBloom { 0% { opacity: 0; } 50% { opacity: .9; } 100% { opacity: 1; transform: scale(1.6); } }
+.f-leave .shot-m .frame { filter: blur(0); animation: exitBlur 5.5s ease-in forwards; }
+@keyframes exitBlur { 0% { filter: blur(0) brightness(1); } 60% { filter: blur(3px) brightness(1.15); } 100% { filter: blur(10px) brightness(1.3); } }
+.night-out { position: absolute; inset: 0; z-index: 2; background: radial-gradient(ellipse at 50% 70%, #1d2a48, #0b1222 75%); opacity: 0; pointer-events: none; }
+.night-out i { position: absolute; width: 14vw; height: 14vw; border-radius: 50%; background: radial-gradient(circle, #ffd9a0cc, #ffc98a33 45%, transparent 70%); filter: blur(2px); }
+.night-out i:nth-child(1) { left: 8%; top: 30%; } .night-out i:nth-child(2) { left: 30%; top: 22%; width: 9vw; height: 9vw; } .night-out i:nth-child(3) { left: 62%; top: 34%; }
+.night-out i:nth-child(4) { left: 80%; top: 18%; width: 8vw; height: 8vw; } .night-out i:nth-child(5) { left: 46%; top: 44%; width: 18vw; height: 18vw; } .night-out i:nth-child(6) { left: 18%; top: 52%; width: 7vw; height: 7vw; } .night-out i:nth-child(7) { left: 72%; top: 56%; width: 10vw; height: 10vw; }
+.f-leave .night-out { animation: nightIn 7s ease-in-out 3.6s forwards; }
+@keyframes nightIn { from { opacity: 0; transform: scale(1.15); } to { opacity: 1; transform: scale(1); } }
+.f-leave .night-out i { animation: bokehDrift 6s ease-in-out infinite alternate; }
+@keyframes bokehDrift { to { transform: translate(-8px, 4px); opacity: .7; } }
