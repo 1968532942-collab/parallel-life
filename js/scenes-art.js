@@ -129,7 +129,7 @@
         layer('c_room_empty', 'past-room') +
         hit('switch', 90, 36, 9, 14) + hit('desk', 34, 24, 34, 12) +
         '<div class="room-dark"></div><div class="ceil-warm"></div>');
-      const chat = `<div class="chat"><div class="chat-top">家</div><div class="bub in">到了吗？房间怎么样</div><div class="bub me sent-b">我收拾好了，房间还不错。</div><div class="chat-input"><span class="typed">我收拾好了，房间还不错。</span><button class="send" data-hit="send" aria-label="发送">发送</button></div></div>`;
+      const chat = `<div class="chat"><div class="chat-top">妈</div><div class="bub in">到了吗？房间怎么样</div><div class="bub me sent-b">我收拾好了，房间还不错。</div><div class="chat-input"><span class="typed">我收拾好了，房间还不错。</span><button class="send" data-hit="send" aria-label="发送">发送</button></div></div>`;
       const album = `<div class="album"><div class="chat-top">相册 · 一年前</div><div class="thumbs"><div class="th"></div><div class="th"></div><div class="th big" data-hit="photo"><img src="${A}c_room_empty.webp" alt=""></div><div class="th"></div><div class="th"></div><div class="th"></div></div></div>`;
       const cam = lived ? shot('corridor', frame('c6_corridor', layer('c6_corridor', 'door-swing') + hit('door', 24, 22, 50, 54))) + shot('room', livedRoom) : shot('room', firstRoom);
       return { cam: cam + '<div class="past-tint"></div>', fp: `<div class="fp-phone">${FIG.phoneHand(lived ? album : chat)}</div>` };
@@ -143,7 +143,7 @@
       // 车窗外夜景和倒影都已画在插画里；叠一层向左流动的光带，表现列车向右行驶
       const streaks = `<div class="win-streaks"><div class="mv far">${Array.from({ length: 2 }, () => '<i></i>').join('')}</div><div class="mv near">${Array.from({ length: 12 }, () => '<i></i>').join('')}</div></div>`;
       const art = frame('c2_carriage', vid('v_metro', 'loop', 'mount') + streaks + '<div class="reflect-glow"></div>' + hit('window', 2, 14, 84, 25) + '<div class="door-glow"></div><div class="exit-light"></div>', { cls: 'carriage' }) + '<div class="night-out"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>';
-      const screen = `<div class="chat"><div class="chat-top">家</div><div class="bub in msg-b">今天忙不忙？记得好好吃饭。</div><div class="bub me reply-b">挺好的，不用担心。</div><div class="chat-input"><span class="typed">挺好的，不用担心。</span><button class="send" data-hit="reply" aria-label="回复">回复</button></div><div class="lock">23:41<small>家：今天忙不忙？…</small></div></div>`;
+      const screen = `<div class="chat"><div class="chat-top">妈</div><div class="bub in msg-b">今天忙不忙？记得好好吃饭。</div><div class="bub me reply-b">挺好的，不用担心。</div><div class="chat-input"><span class="typed">挺好的，不用担心。</span><button class="send" data-hit="reply" aria-label="回复">回复</button></div><div class="lock">23:41<small>妈：今天忙不忙？…</small></div></div>`;
       return { cam: shot('m', art), fp: `<div class="fp-phone peek" data-hit="myphone">${FIG.phoneHand(screen)}</div>` };
     },
     // 列车减速、停站：视频跟着放慢、停下；之前的光带层同样处理

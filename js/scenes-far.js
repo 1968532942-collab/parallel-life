@@ -110,7 +110,7 @@
   SCENES.room = {
     build(init) {
       const lived = init.indexOf('lived') >= 0;
-      const chat = `<div class="chat"><div class="chat-top">家</div>
+      const chat = `<div class="chat"><div class="chat-top">妈</div>
         <div class="bub in">到了吗？房间怎么样</div>
         <div class="bub me sent-b">我收拾好了，房间还不错。</div>
         <div class="chat-input"><span class="typed">我收拾好了，房间还不错。</span><button class="send" data-hit="send" aria-label="发送">发送</button></div></div>`;
@@ -147,8 +147,8 @@
         <rect x="240" y="120" width="8" height="660" fill="#c7ccd4"/><rect x="241" y="120" width="2" height="660" fill="#fff" opacity=".6"/>
         <g class="leavers"><g class="leaver" style="--lx:-12px;--ly:-104px">${person({ x: 330, y: 700, s: 1.2, view: 'back', walk: true }, 2)}</g><g class="leaver" style="--lx:-44px;--ly:-118px;--ld:.6s">${person({ x: 378, y: 720, s: 1.24, view: 'back', walk: true, delay: -.5 }, 3)}</g></g>
         <g class="arrive-sign"><rect x="60" y="96" width="120" height="22" rx="4" fill="#1a2234"/><text x="120" y="112" text-anchor="middle" font-size="11" fill="#ffd79a" font-family="sans-serif" letter-spacing="2">下一站 · 江湾路</text></g>`);
-      const screen = `<div class="chat"><div class="chat-top">家</div><div class="bub in msg-b">今天忙不忙？记得好好吃饭。</div><div class="bub me reply-b">挺好的，不用担心。</div>
-        <div class="chat-input"><span class="typed">挺好的，不用担心。</span><button class="send" data-hit="reply" aria-label="回复">回复</button></div><div class="lock">23:41<small>家：今天忙不忙？…</small></div></div>`;
+      const screen = `<div class="chat"><div class="chat-top">妈</div><div class="bub in msg-b">今天忙不忙？记得好好吃饭。</div><div class="bub me reply-b">挺好的，不用担心。</div>
+        <div class="chat-input"><span class="typed">挺好的，不用担心。</span><button class="send" data-hit="reply" aria-label="回复">回复</button></div><div class="lock">23:41<small>妈：今天忙不忙？…</small></div></div>`;
       return { cam: U.shot('m', out + car), fp: `<div class="fp-phone peek" data-hit="myphone">${F.phoneHand(screen)}</div>` };
     },
     flag(root, name) {
