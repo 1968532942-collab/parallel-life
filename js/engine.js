@@ -195,7 +195,11 @@
   function track(el, btn, minW, minH) {
     const loop = () => {
       if (!el.isConnected || !btn.isConnected) return;
-      const r = el.getBoundingClientRect(), a = app.getBoundingClientRect();
+      const r0 = el.getBoundingClientRect(), a = app.getBoundingClientRect();
+      // 点击区只取画面里真正露出来的部分：不超出屏幕，也不落在文字面板下面
+      const capTop = cap.classList.contains('hidden') ? a.bottom : cap.querySelector('.cap-meta, .cap-lines, .cap-foot').getBoundingClientRect().top - 8;
+      const top = Math.max(r0.top, a.top), bottom = Math.min(r0.bottom, a.bottom, Math.max(capTop, top + 60));
+      const r = { left: r0.left, width: r0.width, top, height: Math.max(0, bottom - top) };
       const w = Math.max(minW || 70, Math.min(r.width, 240)), h = Math.max(minH || 70, Math.min(r.height, 240));
       btn.style.left = (r.left - a.left + r.width / 2 - w / 2) + 'px';
       btn.style.top = (r.top - a.top + r.height / 2 - h / 2) + 'px';
