@@ -136,16 +136,23 @@
     }
   };
 
+  const SCENES_METRO_OLD = SCENES.metro && SCENES.metro.flag;
   /* ---------------- 远方二：末班地铁 ---------------- */
   SCENES.metro = {
     build() {
       // 车窗外夜景和倒影都已画在插画里；叠一层向左流动的光带，表现列车向右行驶
       const streaks = `<div class="win-streaks"><div class="mv far">${Array.from({ length: 2 }, () => '<i></i>').join('')}</div><div class="mv near">${Array.from({ length: 12 }, () => '<i></i>').join('')}</div></div>`;
-      const art = frame('c2_carriage', streaks + '<div class="reflect-glow"></div>' + hit('window', 2, 14, 84, 25) + '<div class="door-glow"></div><div class="exit-light"></div>', { cls: 'carriage' }) + '<div class="night-out"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>';
+      const art = frame('c2_carriage', vid('v_metro', 'loop', 'mount') + streaks + '<div class="reflect-glow"></div>' + hit('window', 2, 14, 84, 25) + '<div class="door-glow"></div><div class="exit-light"></div>', { cls: 'carriage' }) + '<div class="night-out"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>';
       const screen = `<div class="chat"><div class="chat-top">家</div><div class="bub in msg-b">今天忙不忙？记得好好吃饭。</div><div class="bub me reply-b">挺好的，不用担心。</div><div class="chat-input"><span class="typed">挺好的，不用担心。</span><button class="send" data-hit="reply" aria-label="回复">回复</button></div><div class="lock">23:41<small>家：今天忙不忙？…</small></div></div>`;
       return { cam: shot('m', art), fp: `<div class="fp-phone peek" data-hit="myphone">${FIG.phoneHand(screen)}</div>` };
     },
-    flag: SCENES.metro.flag
+    // 列车减速、停站：视频跟着放慢、停下；之前的光带层同样处理
+    flag(root, name, on) {
+      if (SCENES_METRO_OLD) SCENES_METRO_OLD(root, name, on);
+      const v = root.querySelector('video.vid'); if (!v || !on) return;
+      if (name === 'slow') { const t0 = performance.now(); const step = () => { const p = Math.min(1, (performance.now() - t0) / 2600); try { v.playbackRate = 1 - .55 * p; } catch (e) {} if (p < 1) requestAnimationFrame(step); }; step(); }
+      if (name === 'stop') setTimeout(() => { try { v.pause(); } catch (e) {} }, 1600);
+    }
   };
 
   /* ---------------- 远方三：音乐会 ---------------- */

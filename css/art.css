@@ -171,3 +171,6 @@
 /* 地铁：点手机之前，手机从文字面板上方露出上半截，能直接点到；回消息时手机放低一些 */
 .act[data-scene="metro"] .fp-phone.peek { width: min(60%, 260px); bottom: max(26%, 170px); transform: translate(-50%, 58%); }
 .act[data-scene="metro"].f-phone .fp-phone { width: min(68%, 300px); bottom: max(12%, 70px); transform: translate(-50%, 0); }
+
+/* 地铁视频自带窗外流动，播放后隐藏代码画的光带 */
+.frame > video.vid.playing ~ .win-streaks { opacity: 0; transition: opacity 1s; }
