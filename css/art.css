@@ -179,3 +179,33 @@
 
 /* 地铁视频自带窗外流动，播放后隐藏代码画的光带 */
 .frame > video.vid.playing ~ .win-streaks { opacity: 0; transition: opacity 1s; }
+
+/* ---------- 新增小互动的反馈 ---------- */
+.tap-burst { position: absolute; z-index: 25; width: 0; height: 0; pointer-events: none; }
+.tap-burst span { position: absolute; left: -30px; top: -30px; width: 60px; height: 60px; border-radius: 50%; border: 2px solid #ffe7b4; box-shadow: 0 0 18px #f3cf8f; animation: burstRing .9s ease-out forwards; }
+.tap-burst i { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: #fff1cc; box-shadow: 0 0 8px #ffd98a; transform: rotate(var(--a)) translateX(0); animation: burstDot 1s ease-out forwards; }
+@keyframes burstRing { from { transform: scale(.4); opacity: 1; } to { transform: scale(2.2); opacity: 0; } }
+@keyframes burstDot { from { transform: rotate(var(--a)) translateX(10px); opacity: 1; } to { transform: rotate(var(--a)) translateX(54px); opacity: 0; } }
+/* 面馆：点菜后面才端上来 */
+.act[data-scene="noodle"] .bowl-g { opacity: 0; transform: translateY(14%) scale(.96); transition: opacity 1s ease .5s, transform 1.2s cubic-bezier(.2,.8,.2,1) .5s; }
+.act[data-scene="noodle"].f-order .bowl-g { opacity: 1; transform: none; }
+.act[data-scene="noodle"].f-order.f-steam .bowl-g { transform: scale(1.02); }
+.order-glow { position: absolute; left: 46%; top: 3%; width: 50%; height: 17%; border-radius: 10px; box-shadow: 0 0 0 2px #ffe2a8, 0 0 24px #ffd590; opacity: 0; pointer-events: none; }
+.f-order .order-glow { animation: orderGlow 1.6s ease forwards; }
+@keyframes orderGlow { 30% { opacity: 1; } 100% { opacity: 0; } }
+/* 超市：点购物车后，几样蔬果落进车里 */
+.drop-item { position: absolute; left: 40%; top: 40%; width: 20%; height: 20%; pointer-events: none; }
+.drop-item i { position: absolute; width: 22%; aspect-ratio: 1; border-radius: 50%; opacity: 0; }
+.drop-item i:nth-child(1) { left: 10%; background: radial-gradient(circle at 35% 35%, #ffb36b, #e0782f); }
+.drop-item i:nth-child(2) { left: 42%; background: radial-gradient(circle at 35% 35%, #ff8a7a, #c9443e); }
+.drop-item i:nth-child(3) { left: 72%; background: radial-gradient(circle at 35% 35%, #c9e07a, #7e9a3a); }
+.f-cart .drop-item i { animation: dropIn .9s cubic-bezier(.5,0,.7,1) forwards; }
+.f-cart .drop-item i:nth-child(2) { animation-delay: .18s; } .f-cart .drop-item i:nth-child(3) { animation-delay: .36s; }
+@keyframes dropIn { 0% { opacity: 0; transform: translateY(-120%); } 20% { opacity: 1; } 85% { opacity: 1; transform: translateY(160%); } 100% { opacity: 0; transform: translateY(170%); } }
+/* 厨房：点锅时油花一闪 */
+.sizzle { position: absolute; left: 4%; top: 22%; width: 30%; height: 16%; border-radius: 50%; background: radial-gradient(ellipse, #fff3d0cc, #ffcf8a55 45%, transparent 70%); opacity: 0; mix-blend-mode: screen; pointer-events: none; }
+.f-kitchen .sizzle { animation: sizzle 1.4s ease-out; }
+@keyframes sizzle { 15% { opacity: 1; } 100% { opacity: 0; transform: scale(1.3); } }
+/* 远方：走回家时画面缓缓向前 */
+.f-homeward .shot-night .frame { animation: homeward 9s ease-in-out forwards; transform-origin: 50% 55%; }
+@keyframes homeward { to { transform: scale(1.08); } }

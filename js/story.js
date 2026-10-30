@@ -36,7 +36,8 @@ window.STORY = {
           { cam: [50, 60, 1.34], camT: 4, add: ['close'], lines: ['原来，又是一年秋天了。'] }
         ] },
         { id: 'h2', no: '第二幕', title: '下班后的晚风', scene: 'walk', beats: [
-          { shot: 'walk', cam: [50, 54, 1.02], lines: ['晚饭后，我和家人出门散步。'] },
+          { shot: 'walk', cam: [50, 54, 1.02], lines: ['晚饭后，我和家人出门散步。'],
+            act: { type: 'tap', hit: 'family', hint: '点击家人，跟上他们', add: ['follow-family'], cam: [46, 56, 1.08], camT: 3, wait: 1300, sfx: 'step' } },
           { cam: [50, 56, 1.1], camT: 6, lines: ['一路聊着家常，不知不觉走到了以前读书的高中附近。'] },
           { shot: 'gate', cam: [50, 50, 1], add: ['bell'], sfx: 'bell', lines: ['正好赶上晚自习结束。'],
             act: { type: 'tap', hit: 'gate', hint: '点击校门', add: ['out'], cam: [50, 48, 1.16], camT: 3, wait: 1600, sfx: 'chime' } },
@@ -49,7 +50,8 @@ window.STORY = {
           { shot: 'ext', cam: [50, 50, 1], lines: ['天气渐渐冷了。'] },
           { cam: [50, 48, 1.08], camT: 3, lines: ['下班后，我又去了那家从学生时代就常吃的面馆。'],
             act: { type: 'swipe', dir: 'left', hit: 'door', hint: '向左滑动，推开面馆的门', add: ['open'], cam: [50, 46, 1.5], camT: 1.6, wait: 1500, sfx: 'door' } },
-          { shot: 'int', cam: [50, 50, 1.02], lines: ['老板好像比以前老了一些，但味道还是熟悉的味道。'] },
+          { shot: 'int', cam: [50, 50, 1.02], lines: ['老板好像比以前老了一些，但味道还是熟悉的味道。'],
+            act: { type: 'tap', hit: 'menu', hint: '点菜单，要一碗熟悉的牛肉面', add: ['order'], wait: 1800, sfx: 'chime' } },
           { cam: [50, 52, 1.04], lines: ['旁边坐着几个刚放学的学生，边吃边讨论着考试。'],
             act: { type: 'tap', hit: 'bowl', hint: '点一下面碗', add: ['steam'], wait: 1400, sfx: 'chime' } },
           { cam: [50, 60, 1.3], camT: 4, lines: ['听着他们聊天，我忍不住笑了笑。'] },
@@ -64,10 +66,13 @@ window.STORY = {
           { lines: ['我站在树下，忽然觉得，原来留在这里的这些年，我也没有错过很多好看的春天。'] }
         ] },
         { id: 'h5', no: '第五幕', title: '原来，我也在慢慢长大', scene: 'montage', beats: [
-          { shot: 'market', cam: [50, 52, 1.02], lines: ['又是一个普通的周末。'] },
+          { shot: 'market', cam: [50, 52, 1.02], lines: ['又是一个普通的周末。'],
+            act: { type: 'tap', hit: 'cart', hint: '点购物车，陪家人逛超市', add: ['cart'], wait: 1500, sfx: 'roll' } },
           { cam: [50, 52, 1.02], camT: 6, lines: ['上午陪家人去超市买东西，下午回家收拾房间，晚上一起做饭。'] },
-          { shot: 'tidy', cam: [50, 50, 1.04], lines: ['以前总觉得这些事情很无聊。'] },
-          { shot: 'kitchen', cam: [50, 48, 1.04], lines: ['现在却会主动帮忙，偶尔还能替家里解决一些麻烦。'] },
+          { shot: 'tidy', cam: [50, 50, 1.02], lines: ['以前总觉得这些事情很无聊。'],
+            act: { type: 'tap', hit: 'laundry', hint: '帮妈妈一起叠衣服', add: ['tidy'], wait: 1500, sfx: 'cloth' } },
+          { shot: 'kitchen', cam: [50, 48, 1.02], lines: ['现在却会主动帮忙，偶尔还能替家里解决一些麻烦。'],
+            act: { type: 'tap', hit: 'pot', hint: '点锅，帮妈妈炒菜', add: ['kitchen'], wait: 1500, sfx: 'sizzle' } },
           { shot: 'sofa', cam: [50, 50, 1], add: ['phone'], lines: ['吃完晚饭，我坐在沙发上刷手机。'],
             act: { type: 'tap', hit: 'phone', hint: '点击手机', add: ['feed'], wait: 1200, sfx: 'tap' } },
           { lines: ['看到有人分享另一座城市的生活。'] },
@@ -118,8 +123,9 @@ window.STORY = {
             act: { type: 'tap', hit: 'stage', hint: '点击舞台', add: ['spot', 'play'], cam: [50, 40, 1.26], camT: 9, wait: 2400, music: 1.6, musicT: 5 } },
           { lines: ['熟悉的旋律响起来时，我坐在座位上，几乎忘了呼吸。'] },
           { cam: [50, 44, 1.12], camT: 5, lines: ['周围的人和我一样，认真听着台上的演出。', '那一瞬间，我突然觉得，当初决定来到这座城市，真好。'] },
-          { shot: 'street', rm: ['play'], cam: [50, 50, 1.02], music: 1, lines: ['散场的时候，外面的夜风有点凉。', '我一个人慢慢往地铁站走。'] },
-          { cam: [50, 56, 1.14], camT: 8, lines: ['路边的灯光映在地上，耳边仿佛还回荡着刚才的旋律。', '今晚的快乐，好像可以记很久。'] }
+          { shot: 'street', rm: ['play'], cam: [50, 50, 1], music: 1, lines: ['散场的时候，外面的夜风有点凉。', '我一个人慢慢往地铁站走。'],
+            act: { type: 'tap', hit: 'walkon', hint: '点击街道，慢慢走向地铁站', add: ['streetwalk'], wait: 1500, sfx: 'step' } },
+          { cam: [50, 52, 1.02], camT: 8, lines: ['路边的灯光映在地上，耳边仿佛还回荡着刚才的旋律。', '今晚的快乐，好像可以记很久。'] }
         ] },
         { id: 'c4', no: '第四幕', title: '一个人的周末', scene: 'gallery', beats: [
           { shot: 'gallery', cam: [50, 50, 1], lines: ['这周终于不用加班了。', '我给自己留了一整个下午，去逛一直想去的美术馆。'],
@@ -139,7 +145,8 @@ window.STORY = {
             act: { type: 'tap', hit: 'cups', hint: '点击杯子，一起碰杯', add: ['cheers'], wait: 1900, sfx: 'clink' } },
           { add: ['laugh'], lines: ['大家七嘴八舌地讨论起来，笑声几乎盖过了店里的音乐。'] },
           { add: ['ask'], rm: ['laugh'], lines: ['散场的时候，朋友问我：', '“下周有空吗？我们再约！”', '我笑着答应了。'] },
-          { shot: 'night', cam: [50, 50, 1.02], lines: ['走在回家的路上，忽然意识到：'] },
+          { shot: 'night', cam: [50, 50, 1.02], lines: ['走在回家的路上，忽然意识到：'],
+            act: { type: 'tap', hit: 'road', hint: '点击街道，一个人走回家', add: ['homeward'], cam: [50, 46, 1.1], camT: 6, wait: 1500, sfx: 'step' } },
           { cam: [50, 48, 1.16], camT: 8, lines: ['这座曾经一个人都不认识的城市，已经慢慢有了让我期待见面的人。'] }
         ] },
         { id: 'c6', no: '第六幕', title: '原来，我已经在这里生活了很久', scene: 'room', init: ['lived', 'night', 'dark', 'bedmade', 'clothes', 'items', 'suitcase-in', 'stowed'], beats: [

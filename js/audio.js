@@ -184,6 +184,7 @@
       case 'music': duck(true); startMusic(); break;
       case 'stopmusic': stopMusic(); duck(false); break;
       case 'wind': noise(t, 2.6, { f: 300, fTo: 900, ft: 'bandpass', q: 0.6, vol: 0.06, attack: 1 }); break;
+      case 'sizzle': for (let i = 0; i < 5; i++) noise(t + i * 0.12, 0.5, { f: 5000, ft: 'highpass', vol: 0.03, attack: 0.03 }); break;
       case 'cup': bellTone(2100, t, 0.5, 0.04); break;
       case 'clink': bellTone(2600, t, 0.8, 0.05); bellTone(3100, t + 0.06, 0.8, 0.04); bellTone(2350, t + 0.11, 0.8, 0.04); break;
       case 'step': noise(t, 0.18, { f: 500, vol: 0.03 }); break;

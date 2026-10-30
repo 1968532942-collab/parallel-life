@@ -69,7 +69,7 @@
   /* ---------------- 家乡二：晚风、校门、闪回 ---------------- */
   SCENES.walk = {
     build() {
-      const walk = frame('h2_walk', vid('v_walk', 'loop', 'mount') + `<div class="family-wrap">${layer('h2_family', 'family walker')}</div>`);
+      const walk = frame('h2_walk', vid('v_walk', 'loop', 'mount') + hit('family', 8, 40, 52, 40) + `<div class="family-wrap">${layer('h2_family', 'family walker')}</div>`);
       const gate = frame('h2_gate', hit('gate', 34, 34, 32, 26) + vid('v_gate', 'once', 'out', 'far') + `<div class="students-wrap">${layer('h2_students', 'students walker')}</div>`);
       const flash = frame('h2_flash', vid('v_flash', 'once', 'flashback'));
       return { cam: shot('walk', walk, U.fall('leaf', 9, { t0: 11, t1: 17, s0: 9, s1: 14 })) + shot('gate', gate, U.fall('leaf', 5, { t0: 13, t1: 18, s0: 8, s1: 12 })) + shot('flash', flash, '<div class="flash-frame"></div>' + U.fall('glow', 14, { t0: 12, t1: 18, s0: 2, s1: 5 })) };
@@ -80,7 +80,7 @@
   SCENES.noodle = {
     build() {
       const ext = frame('h3_outside', layer('h3_outside_open', 'door-open') + hit('door', 30, 32, 40, 40));
-      const int = frame('h3_inside', vid('v_noodle', 'loop', 'open') + `<div class="bowl-g" data-hit="bowl" style="left:24%;top:63%;width:52%">${layer('h3_bowl', '', 'position:static;width:100%')}</div>` + `<div class="steam big" style="position:absolute;left:30%;top:44%;width:40%">${steam(0, 0, 100).replace('class="steam-ov"', 'class="steam-ov" style="position:static;width:100%"')}</div>` + steam(64, 14, 14).replace('<svg', '<svg data-idle="1"'));
+      const int = frame('h3_inside', vid('v_noodle', 'loop', 'open') + hit('menu', 46, 3, 50, 17) + '<div class="order-glow"></div>' + `<div class="bowl-g" data-hit="bowl" style="left:24%;top:63%;width:52%">${layer('h3_bowl', '', 'position:static;width:100%')}</div>` + `<div class="steam big" style="position:absolute;left:30%;top:44%;width:40%">${steam(0, 0, 100).replace('class="steam-ov"', 'class="steam-ov" style="position:static;width:100%"')}</div>` + steam(64, 14, 14).replace('<svg', '<svg data-idle="1"'));
       return { cam: shot('ext', ext, U.fall('snow', 26, { t0: 9, t1: 15, s0: 2, s1: 5 })) + shot('int', int) };
     }
   };
@@ -104,7 +104,7 @@
         <div class="post p2"><div class="ph hall">${M.miniHall()}</div><div class="pcap">今晚的音乐会</div></div>
         <div class="post p3"><div class="ph gal">${M.miniGallery()}</div><div class="pcap">周末去了美术馆</div></div></div>`;
       return {
-        cam: shot('market', frame('h5_market', vid('v_market', 'once', 'mount'))) + shot('tidy', frame('h5_tidy'), U.fall('glow', 12, { t0: 14, t1: 20, s0: 2, s1: 3 })) + shot('kitchen', frame('h5_kitchen') + steam(56, 18, 16)) + shot('sofa', frame('h5_sofa')),
+        cam: shot('market', frame('h5_market', vid('v_market', 'once', 'cart') + hit('cart', 32, 42, 34, 34) + '<div class="drop-item"><i></i><i></i><i></i></div>')) + shot('tidy', frame('h5_tidy', vid('v_tidy', 'loop', 'tidy') + hit('laundry', 40, 20, 40, 34)), U.fall('glow', 12, { t0: 14, t1: 20, s0: 2, s1: 3 })) + shot('kitchen', frame('h5_kitchen', vid('v_kitchen', 'loop', 'kitchen') + hit('pot', 0, 20, 36, 22) + '<div class="sizzle"></div>')) + shot('sofa', frame('h5_sofa')),
         fp: `<div class="fp-phone" data-hit="phone">${FIG.phoneHand(screen)}</div>`
       };
     }
@@ -160,7 +160,7 @@
     build() {
       const ticket = `<div class="ticket" data-hit="ticket"><div class="tk-head">电子门票</div><div class="tk-name">城市之夜 · 室内乐音乐会</div><div class="tk-row"><span>周六 19:30</span><span>二楼 · 后排 27 座</span></div><div class="qr">${Array.from({ length: 49 }, (_, i) => `<i class="${(i * 7 + (i >> 2)) % 3 ? '' : 'b'}${[0, 1, 7, 8, 5, 6, 12, 13, 35, 36, 42, 43].includes(i) ? ' b' : ''}"></i>`).join('')}</div><div class="tk-stamp">已检票 ✓</div></div>`;
       const hall = frame('c3_hall', layer('c3_hall_dark', 'hall-dark') + vid('v_concert', 'loop', 'play') + '<div class="house-dim"></div><div class="stage-glow"></div>' + hit('stage', 30, 38, 40, 20));
-      return { cam: shot('ticket', frame('c3_lobby', vid('v_lobby', 'loop', 'mount'))) + shot('hall', hall, U.fall('glow', 10, { t0: 16, t1: 24, s0: 2, s1: 3, cls: 'dust' })) + shot('street', frame('c3_street')), fp: `<div class="fp-phone">${FIG.phoneHand(ticket)}</div>` };
+      return { cam: shot('ticket', frame('c3_lobby', vid('v_lobby', 'loop', 'mount'))) + shot('hall', hall, U.fall('glow', 10, { t0: 16, t1: 24, s0: 2, s1: 3, cls: 'dust' })) + shot('street', frame('c3_street', vid('v_street', 'once', 'streetwalk') + hit('walkon', 30, 40, 40, 30))), fp: `<div class="fp-phone">${FIG.phoneHand(ticket)}</div>` };
     }
   };
 
@@ -178,7 +178,7 @@
   SCENES.friends = {
     build() {
       const table = frame('c5_table', vid('v_cheers', 'once', 'cheers') + hit('cups', 24, 34, 52, 16) + '<div class="spark-ring"></div><div class="ask-bubble">下周有空吗？我们再约！</div><div class="laugh-light"></div>');
-      return { cam: shot('table', table) + shot('night', frame('c5_walk')) };
+      return { cam: shot('table', table) + shot('night', frame('c5_walk', hit('road', 28, 40, 44, 30))) };
     }
   };
 

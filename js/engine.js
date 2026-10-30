@@ -229,7 +229,7 @@
         : '<span class="ring"></span>';
       hits.appendChild(btn);
       track(el, btn);
-      if (a.type === 'tap') btn.addEventListener('click', () => { btn.classList.add('hit-done'); completeAct(a, tok); });
+      if (a.type === 'tap') btn.addEventListener('click', () => { btn.classList.add('hit-done'); burst(btn); completeAct(a, tok); });
       else holdLogic(btn, () => completeAct(a, tok));
     } else if (a.type === 'swipe') {
       const zone = document.createElement('div');
@@ -268,6 +268,16 @@
         completeAct(a, tok, () => setTimeout(() => startRoute(id, 0), 1300));
       }));
     }
+  }
+
+  /* 点中后的反馈：金色涟漪 + 几颗光点，从点击位置散开 */
+  function burst(btn) {
+    const r = btn.getBoundingClientRect(), a = app.getBoundingClientRect();
+    const b = document.createElement('div');
+    b.className = 'tap-burst';
+    b.style.left = (r.left - a.left + r.width / 2) + 'px'; b.style.top = (r.top - a.top + r.height / 2) + 'px';
+    b.innerHTML = '<span></span>' + Array.from({ length: 8 }, (_, i) => `<i style="--a:${i * 45}deg"></i>`).join('');
+    app.appendChild(b); setTimeout(() => b.remove(), 1300);
   }
 
   function holdLogic(btn, done) {
