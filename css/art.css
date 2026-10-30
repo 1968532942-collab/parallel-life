@@ -150,6 +150,7 @@
 
 /* 手机聊天（出租屋发消息、地铁回消息、翻旧照片）：手机抬高，屏幕落在文字面板上方；袖子向下接长，不会在画面中间断开 */
 .act[data-scene="room"].f-phone .fp-phone, .act[data-scene="metro"].f-phone .fp-phone { width: min(68%, 300px); bottom: max(24%, 150px); transform: translate(-50%, 0); }
+.act[data-scene="room"].f-phone .fp-phone { bottom: max(9%, 56px); }
 .phone-hand.art::after { content: ""; position: absolute; left: 0; top: 99.5%; width: 100%; height: 80vh; background-image: var(--hand-img); background-repeat: no-repeat; background-size: 100% 6000%; background-position: 50% 100%; filter: blur(1.5px); }
 .act[data-scene="metro"].f-doors .fp-phone { opacity: 0; transform: translate(-50%, 120%); transition: transform 1.6s var(--ease), opacity 1s; }
 
@@ -169,7 +170,8 @@
 @keyframes bokehDrift { to { transform: translate(-8px, 4px); opacity: .7; } }
 
 /* 地铁：点手机之前，手机从文字面板上方露出上半截，能直接点到；回消息时手机放低一些 */
-.act[data-scene="metro"] .fp-phone.peek { width: min(60%, 260px); bottom: max(26%, 170px); transform: translate(-50%, 58%); }
+.act[data-scene="metro"] .fp-phone.peek { width: min(60%, 260px); bottom: max(26%, 170px); transform: translate(-50%, 130%); opacity: 0; }
+.act[data-scene="metro"].f-peek .fp-phone.peek { transform: translate(-50%, 58%); opacity: 1; }
 .act[data-scene="metro"].f-phone .fp-phone { width: min(68%, 300px); bottom: max(12%, 70px); transform: translate(-50%, 0); }
 
 /* 地铁视频自带窗外流动，播放后隐藏代码画的光带 */

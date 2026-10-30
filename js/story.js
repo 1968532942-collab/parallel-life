@@ -102,7 +102,7 @@ window.STORY = {
           { lines: ['末班地铁里很安静。'],
             act: { type: 'tap', hit: 'window', hint: '点击车窗', add: ['reflect'], cam: [71, 32, 1.45], camT: 2.6, wait: 2200, sfx: 'chime' } },
           { lines: ['车窗上映出我的脸，外面是一栋接一栋掠过去的高楼和灯光。'] },
-          { cam: [50, 50, 1.02], camT: 2, sfx: 'arrive', lines: ['我坐在角落里，听着列车到站的提示音，忽然有一点想家。'],
+          { cam: [50, 50, 1.02], camT: 2, sfx: 'arrive', add: ['peek'], lines: ['我坐在角落里，听着列车到站的提示音，忽然有一点想家。'],
             act: { type: 'tap', hit: 'myphone', hint: '点击手机', add: ['phone', 'msg'], wait: 1500, sfx: 'msg' } },
           { lines: ['打开手机，看到家人发来的消息：', '“今天忙不忙？记得好好吃饭。”'],
             act: { type: 'tap', hit: 'reply', hint: '点击回复', add: ['replied'], wait: 1600, sfx: 'send' } },
